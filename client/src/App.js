@@ -1,55 +1,114 @@
-import React, { Component } from "react";
-import Playlists from "./components/Playlists"
-import "./App.css";
-
-const CLIENT_ID = "b1973aa897914a7a8b045880ef919a81";
-const REDIRECT_URL = "http://localhost:3000/";
-const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize";
-const SPACE_DELIMITER = "%20";
-const SCOPES = [
-  "user-read-currently-playing",
-  "user-read-playback-state",
-  "playlist-read-private",
-];
-const SCOPES_URL_PARAM = SCOPES.join(SPACE_DELIMITER);
-
-/* 
-http://localhost:3000#access_token=ABCqxL4Y&token_type=Bearer&expires_in=3600
-*/
-const getReturnedParamsFromSpotifyAuth = (hash) => {
-    const stringAfterHashtag = hash.substring(1);
-    const paramsInUrl = stringAfterHashtag.split("&");
-    const paramsSplitUp = paramsInUrl.reduce((accumulater, currentValue) => {
-      console.log(currentValue);
-      const [key, value] = currentValue.split("=");
-      accumulater[key] = value;
-      return accumulater;
-    }, {});
-  
-    return paramsSplitUp;
-  };
+import {useEffect, useState} from "react";
+import './App.css';
+import axios from 'axios';
 
 function App() {
-    if (window.location.hash) {
-        const { access_token, expires_in, token_type } =
-          getReturnedParamsFromSpotifyAuth(window.location.hash);
+    const CLIENT_ID = "b39c9c2f4fa346a69e4cdbcafefd5185"
+    const REDIRECT_URI = "http://localhost:3000"
+    const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize"
+    const RESPONSE_TYPE = "token"
+
+    const [token, setToken] = useState("")
+    const [searchKey, setSearchKey] = useState("")
+    const [artists, setArtists] = useState([])
+    const [playlists, setPlaylists] = useState([])
+
+    // const getToken = () => {
+    //     let urlParams = new URLSearchParams(window.location.hash.replace("#","?"));
+    //     let token = urlParams.get('access_token');
+    // }
+
+    useEffect(() => {
+        const hash = window.location.hash
+        let token = window.localStorage.getItem("token")
+
+        // getToken()
+
+
+        if (!token && hash) {
+            token = hash.substring(1).split("&").find(elem => elem.startsWith("access_token")).split("=")[1]
+
+            window.location.hash = ""
+            window.localStorage.setItem("token", token)
+        }
+
+        setToken(token)
+
+    }, [])
+
+    const logout = () => {
+        setToken("")
+        window.localStorage.removeItem("token")
     }
 
-      const handleLogin = () => {
-        window.location = `${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URL}&scope=${SCOPES_URL_PARAM}&response_type=token&show_dialog=true`;
-      };
-    
-    
+    const searchArtists = async (e) => {
+        e.preventDefault()
+        const {data} = await axios.get("https://api.spotify.com/v1/search", {
+            headers: {
+                Authorization: `Bearer ${token}`
+            },
+            params: {
+                q: searchKey,
+                type: "artist"
+            }
+        })
+
+        setArtists(data.artists.items)
+    }
+
+    const getPlaylists = async (e) => {
+        console.log("get playlists");
+        e.preventDefault()
+        const {data} = await axios.get("https://api.spotify.com/v1/me/playlists", {
+            headers: {
+                Authorization: `Bearer ${token}`
+            },
+        })
+        console.log(data);
+
+        setPlaylists(data)
+    }
+
+    const renderPlaylists = async (e) => {
+        return data.items.map((item) => (
+            <p>{item.name}</p>
+        ));
+    }
+
+    const renderArtists = () => {
+        return artists.map(artist => (
+            <div key={artist.id}>
+                {artist.images.length ? <img width={"100%"} src={artist.images[0].url} alt=""/> : <div>No Image</div>}
+                {artist.name}
+            </div>
+        ))
+    }
+
     return (
         <div className="App">
-          <header className="App-header">
-            <h1 className="App-title">Visualify</h1>
-          </header>
-          <p className="App-intro"></p>
-          <button onClick={handleLogin}>login to spotify</button>
-          {/* <Playlists accessToken={access_token}/> */}
+            <header className="App-header">
+                <h1>Spotify React</h1>
+                {!token ?
+                    <a href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`}>Login
+                        to Spotify</a>
+                    : <button onClick={logout}>Logout</button>}
+
+                {token ?
+                    // <form onSubmit={searchArtists}>
+                    //     <input type="text" onChange={e => setSearchKey(e.target.value)}/>
+                    //     <button type={"submit"}>Search</button>
+                    // </form>
+                    <button onClick={getPlaylists}>get playlists</button>
+
+                    : <h2>Please login</h2>
+                }
+
+                {/* {renderArtists()} */}
+                { renderPlaylists}
+
+            </header>
         </div>
     );
-} 
+}
 
 export default App;
