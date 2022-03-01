@@ -1,1 +1,0 @@
-This is literally here because Git doesn't track empty folders. We can delete this as soon as there's another file here.
