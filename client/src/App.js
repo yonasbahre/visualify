@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import './App.css';
 import axios from 'axios';
+import Playlists from "./components/Playlists"
 
 function App() {
     const CLIENT_ID = "b1973aa897914a7a8b045880ef919a81"
@@ -65,12 +66,9 @@ function App() {
                     : <button onClick={logout}>Logout</button>
                 }
                 {token ?
-                    <div>
-                        <button onClick={getPlaylists}>get playlists</button>
-                    </div>
+                    <Playlists token={token} />
                     : <h2>Please login</h2>
                 }
-                { renderPlaylists() }
             </div>
         </div>
     );
