@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
+import Playlists from "./components/Playlists"
 import './App.css';
-import axios from 'axios';
 
 function App() {
     const CLIENT_ID = "b1973aa897914a7a8b045880ef919a81"
@@ -9,7 +9,6 @@ function App() {
     const RESPONSE_TYPE = "token"
 
     const [token, setToken] = useState("")
-    const [playlists, setPlaylists] = useState([])
     const [playlistsItems, setPlaylistsItems] = useState([])
 
     useEffect(() => {
@@ -30,32 +29,6 @@ function App() {
     const logout = () => {
         setToken("")
         window.localStorage.removeItem("token")
-    }
-
-    const getPlaylists = async (e) => {
-        e.preventDefault()
-        const {data} = await axios
-            .get("https://api.spotify.com/v1/me/playlists", {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                },
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-
-        setPlaylists(data.items)
-    }
-
-    const renderPlaylists = () => {
-        console.log(token);
-        console.log(playlists);
-        return playlists.map(playlist => (
-            <div key={playlist.id}>
-                {playlist.images.length ? <img width={"100%"} src={playlist.images[0].url} alt=""/> : <div>No Image</div>}
-                {playlist.name}
-            </div>
-        ))
     }
 
     const getPlaylistsItems = async (e) => {
@@ -84,13 +57,10 @@ function App() {
                     : <button onClick={logout}>Logout</button>
                 }
                 {token ?
-                    <div>
-                        <button onClick={getPlaylists}>get playlists</button>
-                    </div>
+                    <Playlists token={token} />
+                    // { getPlaylistsItems() }
                     : <h2>Please login</h2>
                 }
-                { renderPlaylists() }
-                {/* { getPlaylistsItems() } */}
             </div>
         </div>
     );
