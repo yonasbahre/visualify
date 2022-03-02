@@ -10,6 +10,7 @@ function App() {
 
     const [token, setToken] = useState("")
     const [playlists, setPlaylists] = useState([])
+    const [playlistsItems, setPlaylistsItems] = useState([])
 
     useEffect(() => {
         const hash = window.location.hash
@@ -47,12 +48,30 @@ function App() {
     }
 
     const renderPlaylists = () => {
+        console.log(token);
+        console.log(playlists);
         return playlists.map(playlist => (
             <div key={playlist.id}>
                 {playlist.images.length ? <img width={"100%"} src={playlist.images[0].url} alt=""/> : <div>No Image</div>}
                 {playlist.name}
             </div>
         ))
+    }
+
+    const getPlaylistsItems = async (e) => {
+        e.preventDefault()
+        const {data} = await axios
+            .get("https://api.spotify.com/v1/playlists/1LNoeW9X4ArpKeNnl0gPWK/tracks", {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+        console.log(data);
+
+        setPlaylistsItems(data.items)
     }
 
     return (
@@ -71,6 +90,7 @@ function App() {
                     : <h2>Please login</h2>
                 }
                 { renderPlaylists() }
+                {/* { getPlaylistsItems() } */}
             </div>
         </div>
     );
