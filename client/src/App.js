@@ -32,6 +32,7 @@ function App() {
     }
 
     const getPlaylistsItems = async (e) => {
+        console.log("getPlaylistsItems");
         e.preventDefault()
         const {data} = await axios
             .get("https://api.spotify.com/v1/playlists/1LNoeW9X4ArpKeNnl0gPWK/tracks", {
@@ -46,6 +47,8 @@ function App() {
 
         setPlaylistsItems(data.items)
     }
+    getPlaylistsItems();
+    console.log(playlistsItems);
 
     return (
         <div id="App">
@@ -57,8 +60,7 @@ function App() {
                     : <button onClick={logout}>Logout</button>
                 }
                 {token ?
-                    <Playlists token={token} />
-                    // { getPlaylistsItems() }
+                      <Playlists token={token} />
                     : <h2>Please login</h2>
                 }
             </div>
