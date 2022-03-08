@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
-import Playlists from "./components/Playlists"
+import Playlists from "./components/Playlists";
+import Features from "./components/Features";
 import './App.css';
 
 function App() {
@@ -31,25 +32,6 @@ function App() {
         window.localStorage.removeItem("token")
     }
 
-    const getPlaylistsItems = async (e) => {
-        console.log("getPlaylistsItems");
-        e.preventDefault()
-        const {data} = await axios
-            .get("https://api.spotify.com/v1/playlists/1LNoeW9X4ArpKeNnl0gPWK/tracks", {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                },
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-        console.log(data);
-
-        setPlaylistsItems(data.items)
-    }
-    getPlaylistsItems();
-    console.log(playlistsItems);
-
     return (
         <div id="App">
             <div id="App-header">
@@ -60,7 +42,10 @@ function App() {
                     : <button onClick={logout}>Logout</button>
                 }
                 {token ?
+                    <div>
+                      <Features />
                       <Playlists token={token} />
+                    </div>
                     : <h2>Please login</h2>
                 }
             </div>
