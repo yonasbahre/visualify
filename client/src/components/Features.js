@@ -2,7 +2,6 @@ import {useState} from "react";
 import axios from 'axios';
 
 function Features({token, songIDs}) {
-    console.log("features");
     const [features, setFeatures] = useState([])
 
     let danceabilityTotal = 0;
@@ -17,10 +16,8 @@ function Features({token, songIDs}) {
     songIDs.forEach((songID) => {
         getRequest += songID +  "%";
     })
-    console.log("after for each songID");
     getRequest = getRequest.slice(0, -1);   // removes last %
 
-    console.log("after build get Request");
     const getFeatures = async (e) => {
         e.preventDefault()
         const {data} = await axios
@@ -33,12 +30,8 @@ function Features({token, songIDs}) {
                 console.log(error);
             });
 
-            console.log(data);
-            setFeatures(data)
+            setFeatures(data.audio_features)
     }
-
-    getFeatures();
-    console.log("after calling getFeatures");
 
     features.forEach((song) => {
         danceabilityTotal += song.danceability;
@@ -49,15 +42,34 @@ function Features({token, songIDs}) {
         tempoTotal += song.tempo;
     });
 
-    const danceability = danceabilityTotal / features.length;
-    const speechiness = speechinessTotal / features.length;
-    const acousticness = acousticnessTotal / features.length;
-    const liveness = livenessTotal / features.length;
-    const happiness = happinessTotal / features.length;
-    const temp = tempoTotal / features.length;
+    const danceability = getFeatureAverage(danceabilityTotal);
+    const speechiness = getFeatureAverage(speechinessTotal);
+    const acousticness = getFeatureAverage(acousticnessTotal);
+    const liveness = getFeatureAverage(livenessTotal);
+    const happiness = getFeatureAverage(happinessTotal);
+    const tempo = getFeatureAverage(tempoTotal);
+
+    function getFeatureAverage(featureTotal) {
+        if (features.length > 0) {
+            return (featureTotal / features.length).toFixed(3);
+        }
+        return -1;
+    }
 
     return (
-        <div>
+        <div onload={getFeatures} id="features">
+            { features.length == 0 ? 
+                <button onClick={getFeatures}>get features</button>
+              : 
+                <div>
+                  <p>danceability: {danceability}</p>
+                  <p>speechiness: {speechiness}</p>
+                  <p>acousticness: {acousticness}</p>
+                  <p>liveness: {liveness}</p>
+                  <p>happiness: {happiness}</p>
+                  <p>tempo: {tempo}</p>
+                </div>
+            }
         </div>
     );
 }
