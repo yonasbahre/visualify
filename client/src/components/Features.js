@@ -57,7 +57,7 @@ function Features({token, songIDs}) {
     }
 
     return (
-        <div onload={getFeatures} id="features">
+        <div id="features">
             { features.length == 0 ? 
                 <button onClick={getFeatures}>get features</button>
               : 
