@@ -10,7 +10,6 @@ function App() {
     const RESPONSE_TYPE = "token"
 
     const [token, setToken] = useState("")
-    const [playlistsItems, setPlaylistsItems] = useState([])
 
     useEffect(() => {
         const hash = window.location.hash
