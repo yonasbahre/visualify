@@ -30,7 +30,7 @@ function Features({token, songIDs}) {
                 console.log(error);
             });
 
-            setFeatures(data.audio_features)
+        setFeatures(data.audio_features)
     }
 
     features.forEach((song) => {
