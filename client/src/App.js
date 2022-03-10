@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import Playlists from "./components/Playlists";
-import PlaylistsItems from "./components/PlaylistsItems";
+import PlaylistItems from "./components/PlaylistItems";
 import Features from "./components/Features";
 import './App.css';
 
@@ -32,7 +32,7 @@ function App() {
         window.localStorage.removeItem("token")
     }
 
-    const playlistIDs = ["1LNoeW9X4ArpKeNnl0gPWK"];
+    const playlistID = "1LNoeW9X4ArpKeNnl0gPWK";
     const songIDs = ["7ouMYWpwJ422jRcDASZB7P", "2C4VqPOruhp5EdPBeR92t6lQ", "2C2takcwOaAZWiXQijPHIx7B"];
 
     return (
@@ -48,7 +48,7 @@ function App() {
             {token ?
                 <div>
                     <Features token={token} songIDs={songIDs} />
-                    <PlaylistsItems token={token} playlistIDs={playlistIDs} />
+                    <PlaylistItems token={token} playlistID={playlistID} />
                     <Playlists token={token} />
                 </div>
                 : <h2>Please login</h2>
