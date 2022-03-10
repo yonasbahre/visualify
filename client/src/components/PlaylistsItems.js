@@ -4,11 +4,10 @@ import axios from 'axios';
 function PlaylistsItems({token, playlistIDs}) {
     console.log("PlaylistsItems");
     const [playlistItems, setPlaylistItems] = useState([])
-    setPlaylistItems("");
 
     const playlistID = playlistIDs[0];
 
-    const getRequest = "https://api.spotify.com/v1/playlists/" + playlistID + "/tracks?market=ES&fields=items(added_by.id%2Ctrack(name%2Chref%2Calbum(name%2Chref)))&limit=10&offset=5"
+    const getRequest = "https://api.spotify.com/v1/playlists/" + playlistID + "/tracks?fields=items(track(id%2C%20name))";
 
     const getPlaylistItems = async (e) => {
         e.preventDefault()
@@ -21,11 +20,17 @@ function PlaylistsItems({token, playlistIDs}) {
             .catch((error) => {
                 console.log(error);
             });
-        console.log(data);
 
-        setPlaylistItems(data)
+        setPlaylistItems(data.items)
     }
 
+    const renderPlaylistItems = () => {
+        return playlistItems.map(item => (
+            <div key={item.track.id}>
+                {item.track.name}
+            </div>
+        ))
+    }
     return (
         <div id="Playlists Items">
             { playlistItems.length == 0 ? 
@@ -33,6 +38,7 @@ function PlaylistsItems({token, playlistIDs}) {
               : 
                 <div>
                   <p>playlists items</p>
+                  { renderPlaylistItems() }
                 </div>
             }
         </div>
