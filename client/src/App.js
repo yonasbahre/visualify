@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
 import Playlists from "./components/Playlists";
+import PlaylistItems from "./components/PlaylistItems";
 import Features from "./components/Features";
 import './App.css';
 
@@ -31,25 +32,27 @@ function App() {
         window.localStorage.removeItem("token")
     }
 
+    const playlistID = "1LNoeW9X4ArpKeNnl0gPWK";
     const songIDs = ["7ouMYWpwJ422jRcDASZB7P", "2C4VqPOruhp5EdPBeR92t6lQ", "2C2takcwOaAZWiXQijPHIx7B"];
 
     return (
         <div id="App">
             <div id="App-header">
                 <h1>Spotify React</h1>
-                {!token ?
-                    <a href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`}>Login
-                        to Spotify</a>
-                    : <button onClick={logout}>Logout</button>
-                }
-                {token ?
-                    <div>
-                      <Features token={token} songIDs={songIDs}/>
-                      <Playlists token={token} />
-                    </div>
-                    : <h2>Please login</h2>
-                }
             </div>
+            {!token ?
+                <a href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`}>
+                    Login to Spotify</a>
+                : <button onClick={logout}>Logout</button>
+             }
+            {token ?
+                <div>
+                    <Features token={token} songIDs={songIDs} />
+                    <PlaylistItems token={token} playlistID={playlistID} />
+                    <Playlists token={token} />
+                </div>
+                : <h2>Please login</h2>
+            }
         </div>
     );
 }
