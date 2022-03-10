@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
-import Playlists from "./components/Playlists"
+import Playlists from "./components/Playlists";
+import Features from "./components/Features";
 import './App.css';
 
 function App() {
@@ -30,6 +31,8 @@ function App() {
         window.localStorage.removeItem("token")
     }
 
+    const songIDs = ["7ouMYWpwJ422jRcDASZB7P", "2C4VqPOruhp5EdPBeR92t6lQ", "2C2takcwOaAZWiXQijPHIx7B"];
+
     return (
         <div id="App">
             <div id="App-header">
@@ -40,7 +43,10 @@ function App() {
                     : <button onClick={logout}>Logout</button>
                 }
                 {token ?
-                    <Playlists token={token} />
+                    <div>
+                      <Features token={token} songIDs={songIDs}/>
+                      <Playlists token={token} />
+                    </div>
                     : <h2>Please login</h2>
                 }
             </div>
