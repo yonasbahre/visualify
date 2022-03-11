@@ -1,0 +1,17 @@
+.PlaylistsInGenerator {
+    padding: 10px;
+    height: 100%;
+}
+
+.SinglePlaylist {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 2px;
+    width: 95%
+}
+
+.Playlists {
+    overflow-x: hidden;
+    overflow-y: scroll;
+    max-height: 200px;
+}

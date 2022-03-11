@@ -1,0 +1,45 @@
+html {
+    background: linear-gradient(lightblue, rgb(78, 211, 255))
+}
+
+.App {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 0;
+    margin: 0;
+}
+
+.App-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding-left: 20px;
+    padding-right: 20px;
+    justify-content: space-between;
+    height: 75px;
+}
+
+.App-Main {
+    display: flex;
+    flex-direction: row;
+    align-items: center;;
+    justify-content: space-between;
+}
+
+button {
+    border: none;
+    background-color: whitesmoke;
+    font-size: large;
+    width: 250px;
+    height: 50px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: lightgray;
+}
+
+.centerConsole {
+    display: flex;
+    flex-direction: column;
+    height: 600px;
+}

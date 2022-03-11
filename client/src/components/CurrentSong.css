@@ -1,0 +1,59 @@
+.CurrentSong {
+    background-color: white;
+    width: 600px;
+    height: 450px;
+    /* delete later? */
+    margin: 3px;
+    display: grid;
+    grid-template-areas: 
+        "Cover Cover Cover Cover SongInfo SongInfo"
+        "Cover Cover Cover Cover SongInfo SongInfo"
+        "AddSong AddSong AddSong SkipSong SkipSong SkipSong";
+    grid-template-columns: 100px 100px 100px 100px 100px 100px;
+    grid-template-rows: 200px 200px 50px;
+    color: white;
+}
+
+.Cover {
+    grid-area: Cover;
+    background-color: rgb(96, 96, 170);
+}
+
+.AddSong {
+    grid-area: AddSong;
+    background-color: rgb(107, 199, 107);
+}
+
+.SkipSong {
+    grid-area: SkipSong;
+    background-color: rgb(138, 110, 100);
+}
+
+.SongInfo {
+    grid-area: SongInfo;
+    color: black;
+    justify-items: center;
+}
+
+.AddSong button {
+    background-color: rgb(56, 211, 56);
+    width: 100%;
+}
+
+.AddSong button:hover {
+    background-color: rgb(125, 250, 125);
+}
+
+.SkipSong button {
+    background-color: rgb(255, 108, 55);
+    width: 100%;
+}
+
+.SkipSong button:hover {
+    background-color: rgb(255, 152, 115);
+}
+
+.Cover > img {
+    max-width: 100%;
+    max-height: 100%;
+}

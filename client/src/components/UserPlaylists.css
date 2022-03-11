@@ -1,0 +1,12 @@
+.UserPlaylists {
+    margin: 10px;
+    max-height: 150px;
+    overflow-x: hidden;
+}
+
+.AddSinglePlaylist {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 2px;
+    width: 95%;
+}
