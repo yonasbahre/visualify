@@ -1,0 +1,24 @@
+.webTitle {
+  background-color: #6C98A8;
+  color: black;
+  padding-bottom: 1%;
+  margin-left: 6cm;
+  margin-top: -0.1in;
+  width: 110pt;
+  padding-left: 0.4cm;
+  background-size: contain;
+  padding-top: 0.2cm;
+}
+
+.playlistButton {
+  background-color: #6C98A8;
+  margin-left: 80pt;
+  width: 80pt;
+  font-size: 20px;
+}
+
+.graphHeading {
+  margin-left: 130pt;
+  margin-top: 40pt;
+  font-size: 35px;
+}

@@ -1,0 +1,28 @@
+.sliderStyle  {
+  margin-left: 10pt;
+  width: 340pt;
+  margin-bottom: 10pt;
+}
+
+.features {
+  font-size: 30px;
+}
+
+.inlineTextSlide {
+  display: flex;
+  width: 100%;
+}
+
+.sliderHead {
+  font-size: 20px;
+  flex: 0.5;
+  height: fit-content;
+  margin-top: -3.5px;
+}
+
+.sliderStyling  {
+  flex: 1;
+  width: 100%;
+  height: auto;
+  margin-left: -20px;
+}
