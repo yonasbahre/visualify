@@ -4,6 +4,14 @@ import axios from 'axios';
 function Recommendations({token, songIDs}) {
     const [recommendations, setRecommendations] = useState([])
 
+    const danceability = window.localStorage.getItem("danceability")
+    const speechiness = window.localStorage.getItem("speechiness")
+    const acousticness = window.localStorage.getItem("acousticness")
+    const liveness = window.localStorage.getItem("liveness")
+    const happiness = window.localStorage.getItem("happiness")
+    const tempo = window.localStorage.getItem("tempo")
+
+
     const getRecommendations = async (e) => {
         e.preventDefault()
         const {data} = await axios
