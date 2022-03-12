@@ -11,6 +11,10 @@ function Recommendations({token, songIDs}) {
     const happiness = window.localStorage.getItem("happiness")
     const tempo = window.localStorage.getItem("tempo")
 
+    function getRequest() {
+        
+    }
+
 
     const getRecommendations = async (e) => {
         e.preventDefault()
