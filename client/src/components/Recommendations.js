@@ -12,12 +12,12 @@ function Recommendations({token, features, songIDs}) {
     const limitPerRequest = Math.ceil(50 / Math.ceil(songIDs.length/3));
 
     // create getRequest
-    // rn it has genre and artist hardcoded in
-    function getRequest(currentSongIDs) {
+    // the artistID and genre are from the first song in currentSongIDs
+    function getRequest(currentSongIDs, artistID, genre) {
         let getReq = "https://api.spotify.com/v1/recommendations?"
             + "limit=" + limitPerRequest 
-            + "&seed_artists=0e86yPdC41PGRkLp2Q1Bph"
-            + "&seed_genres=pop"
+            + "&seed_artists=" + artistID
+            + "&seed_genres=" + genre
             + "&seed_tracks=";
         currentSongIDs.forEach((songID) => {
             getReq += songID + "%2C";
@@ -40,10 +40,37 @@ function Recommendations({token, features, songIDs}) {
         for (let i = 0; i < songIDs.length; i+=3) {
             // use three songs per recommendation
             const currentSongIDs = songIDs.slice(i, i + 3);
+
+            // get the the track data as tracksData
+            e.persist()
+            const {data: tracksData} = await axios
+            .get("https://api.spotify.com/v1/tracks?ids=" + songIDs[i], {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+            // the first artist of the first song in currentSongIDs
+            const artist = tracksData.tracks[0].artists[0];
             
+            // get the artists data as artistsData
+            const {data: artistsData} = await axios
+                .get("https://api.spotify.com/v1/artists?ids=" + artist.id, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    },
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+            // the first genre of artist
+            const genre = artistsData.artists[0].genres[0];
+
             // get recommended songs
             const {data} = await axios
-                .get(getRequest(currentSongIDs), {
+                .get(getRequest(currentSongIDs, artist.id, genre), {
                     headers: {
                         Authorization: `Bearer ${token}`
                     },
