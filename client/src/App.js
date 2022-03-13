@@ -1,7 +1,9 @@
 import {useEffect, useState} from "react";
-import Playlists from "./components/Playlists"
 
-
+import Playlists from "./components/Playlists";
+import PlaylistItems from "./components/PlaylistItems";
+import Features from "./components/Features";
+import Genres from "./components/Genres";
 import './App.css';
 import Console from "./components/Consoles";
 import Accordion from "./components/Accordion";
@@ -379,6 +381,7 @@ function App() {
              }
             {token ?
                 <div>
+                    <Genres token={token} songIDs={songIDs} />
                     <Features token={token} songIDs={songIDs} />
                     <PlaylistItems token={token} playlistID={playlistID} />
                     <Playlists token={token} />
