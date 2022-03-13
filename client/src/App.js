@@ -36,7 +36,7 @@ function App() {
     }
 
     const playlistID = "1LNoeW9X4ArpKeNnl0gPWK";
-    const songIDs = ["25z6kpmIwkCUqk2IORrJ5v", "25z6kpmIwkCUqk2IORrJ5v", "25z6kpmIwkCUqk2IORrJ5v", "25z6kpmIwkCUqk2IORrJ5v"];
+    const songIDs = ["11dxtPJKR4E0wlSr0A0t47", "37ynsCQ2PUTc9hbWygrbKy", "25z6kpmIwkCUqk2IORrJ5v", "25z6kpmIwkCUqk2IORrJ5v"];
     const features = {"danceability": "0.5",
         "speechiness": "0.5",
         "acousticness": "0.5",
