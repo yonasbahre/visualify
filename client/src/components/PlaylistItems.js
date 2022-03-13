@@ -18,7 +18,7 @@ function PlaylistsItems({token, playlistID}) {
                 console.log(error);
             });
 
-            setPlaylistItems(data.items)
+        setPlaylistItems(data.items)
     }
 
     const renderPlaylistItems = () => {

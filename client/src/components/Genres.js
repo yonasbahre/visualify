@@ -39,7 +39,6 @@ function Genres({token, songIDs}) {
                 track.artists.forEach((artist) => {
                     artistIDs.push(artist.id);
                 });
-    
             }
         });
 
