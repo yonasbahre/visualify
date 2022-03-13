@@ -16,8 +16,6 @@ function Playlists({token}) {
                 console.log(error);
             });
 
-            console.log(data);
-
         setPlaylists(data.items)
     }
 
@@ -30,7 +28,6 @@ function Playlists({token}) {
         ))
     }
 
-    console.log(playlists);
     return (
         <div id="Playlists">
             { playlists.length == 0 ? 
