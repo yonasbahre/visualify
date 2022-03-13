@@ -49,13 +49,6 @@ function Features({token, songIDs}) {
     const happiness = getFeatureAverage(happinessTotal);
     const tempo = getFeatureAverage(tempoTotal);
 
-    window.localStorage.setItem("danceability", danceability)
-    window.localStorage.setItem("speechiness", speechiness)
-    window.localStorage.setItem("acousticness", acousticness)
-    window.localStorage.setItem("liveness", liveness)
-    window.localStorage.setItem("happiness", happiness)
-    window.localStorage.setItem("tempo", tempo)
-
     function getFeatureAverage(featureTotal) {
         if (features.length > 0) {
             return (featureTotal / features.length).toFixed(3);

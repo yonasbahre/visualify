@@ -1,9 +1,11 @@
 import {useEffect, useState} from "react";
-import Playlists from "./components/Playlists";
-import PlaylistItems from "./components/PlaylistItems";
+import './App.css';
+
 import Features from "./components/Features";
 import Genres from "./components/Genres";
-import './App.css';
+import PlaylistItems from "./components/PlaylistItems";
+import Playlists from "./components/Playlists";
+import Recommendations from "./components/Recommendations";
 
 function App() {
     const CLIENT_ID = "b1973aa897914a7a8b045880ef919a81"
@@ -34,7 +36,14 @@ function App() {
     }
 
     const playlistID = "1LNoeW9X4ArpKeNnl0gPWK";
-    const songIDs = ["11dxtPJKR4E0wlSr0A0t47", "2C4VqPOruhp5EdPBeR92t6lQ", "37ynsCQ2PUTc9hbWygrbKy", "25z6kpmIwkCUqk2IORrJ5v"];
+    const songIDs = ["25z6kpmIwkCUqk2IORrJ5v", "25z6kpmIwkCUqk2IORrJ5v", "25z6kpmIwkCUqk2IORrJ5v", "25z6kpmIwkCUqk2IORrJ5v"];
+    const features = {"danceability": "0.5",
+        "speechiness": "0.5",
+        "acousticness": "0.5",
+        "liveness": "0.5",
+        "happiness": "0.5",
+        "tempo": "110"
+    };
 
     return (
         <div id="App">
@@ -50,6 +59,7 @@ function App() {
                 <div>
                     <Genres token={token} songIDs={songIDs} />
                     <Features token={token} songIDs={songIDs} />
+                    <Recommendations token={token} features={features} songIDs={songIDs} />
                     <PlaylistItems token={token} playlistID={playlistID} />
                     <Playlists token={token} />
                 </div>
