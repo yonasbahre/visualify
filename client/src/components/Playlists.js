@@ -15,7 +15,6 @@ function Playlists({token}) {
             .catch((error) => {
                 console.log(error);
             });
-
         setPlaylists(data.items)
     }
 
