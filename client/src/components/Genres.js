@@ -18,8 +18,9 @@ function Genres({token, songIDs}) {
     // set up get request for get artists later
     let getArtistGetRequest = "https://api.spotify.com/v1/artists?ids=";
 
+    // function that creates the genres map
     const getGenres = async (e) => {
-        // get tracks data
+        // get tracks data as tracksData
         e.preventDefault()
         const {data: tracksData} = await axios
             .get(getTracksGetRequest, {
@@ -30,27 +31,25 @@ function Genres({token, songIDs}) {
             .catch((error) => {
                 console.log(error);
             });
-        console.log(tracksData);
 
         // get artist IDs from track data
-        let tempArtistIDs = [];
+        let artistIDs = [];
         tracksData.tracks.forEach((track) => {
             if (track) {
                 track.artists.forEach((artist) => {
-                    tempArtistIDs.push(artist.id);
+                    artistIDs.push(artist.id);
                 });
     
             }
         });
 
         // build get request for get tracks
-        tempArtistIDs.forEach((artistID) => {
+        artistIDs.forEach((artistID) => {
             getArtistGetRequest += artistID +  "%2C";
         })
         getArtistGetRequest = getArtistGetRequest.slice(0, -3);   // removes last %
-        console.log("getArtistGetRequest", getArtistGetRequest);
 
-        // get the artists data
+        // get the artists data as artistsData
         const {data: artistsData} = await axios
             .get(getArtistGetRequest, {
                 headers: {
@@ -60,8 +59,6 @@ function Genres({token, songIDs}) {
             .catch((error) => {
                 console.log(error);
             });
-        console.log(artistsData.artists);
-        
 
         // fill the genres map
         artistsData.artists.forEach((artist) => {
@@ -74,18 +71,15 @@ function Genres({token, songIDs}) {
                 }
             });
         });
-    
-        console.log(genresMap);
     }
 
+    // renders genres map as a list as - genre: count
     const renderGenres = () => {
         return [...genresMap.keys()].map(k => (
                 <li key={k}>{k}: {genresMap.get(k)}</li>
         ));
     }
     
-
-
     return (
         <div id="features">
             { genresMap.size == 0 ? 
