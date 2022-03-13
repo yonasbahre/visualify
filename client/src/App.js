@@ -32,8 +32,14 @@ function App() {
         }
 
         setToken(token)
+        console.log("Token: " + token);
 
     }, [])
+
+    const login = (e) => {
+        e.preventDefault();
+        window.location.href = `${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`;
+    }
 
     const logout = () => {
         setToken("")
@@ -298,9 +304,12 @@ function App() {
 
             <div className="App-header">
                 <h1>Visualify</h1>
-                <button>
-                    LOGIN WITH SPOTIFY
-                </button>
+
+                {!token ?
+                <button onClick={login}>LOGIN WITH SPOTIFY</button>
+                : <button onClick={logout}>LOGOUT</button>
+                }
+
             </div>
 
             <div className="App-Main">
