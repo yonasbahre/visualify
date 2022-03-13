@@ -5,7 +5,7 @@ import { FaTrashAlt } from 'react-icons/fa';
 function SinglePlaylist(props) {
     return (
         <div className="SinglePlaylist">
-            <div>{props.title}</div>
+            <div>{props.name}</div>
             <div>
                 <FaTrashAlt 
                     style={{cursor: "pointer"}}

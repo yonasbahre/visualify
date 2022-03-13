@@ -5,7 +5,7 @@ import './UserPlaylists.css';
 function AddSinglePlaylist(props) {
     return (
         <div className="AddSinglePlaylist">
-            <div>{props.title}</div>
+            <div>{props.name}</div>
             <div><FaPlus onClick={() => props.onAdd(props.id)} style={{cursor: "pointer"}}/></div>            
         </div>
     );

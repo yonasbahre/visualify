@@ -8,7 +8,7 @@ function UserPlaylists(props) {
     return (
         <div className="UserPlaylists">
             {playlists.map((playlist) => (
-                <AddSinglePlaylist title={playlist.title} id={playlist.id} onAdd={props.onAdd}/>
+                <AddSinglePlaylist name={playlist.name} id={playlist.id} onAdd={props.onAdd}/>
             ))}
         </div>
     );

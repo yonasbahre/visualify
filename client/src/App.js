@@ -1,4 +1,5 @@
 import {useEffect, useState} from "react";
+import axios from 'axios';
 
 import Playlists from "./components/Playlists";
 import PlaylistItems from "./components/PlaylistItems";
@@ -34,7 +35,12 @@ function App() {
         }
 
         setToken(token)
-        console.log("Token: " + token);
+
+        // Load user playlists if they're logged in        
+        if (token) {
+            loadUserPlaylists(token);
+        }
+    
 
     }, [])
 
@@ -46,6 +52,26 @@ function App() {
     const logout = () => {
         setToken("")
         window.localStorage.removeItem("token")
+    }
+
+    // Loads user's playlists from the Spotify API
+    const loadUserPlaylists = async (token) => {
+        if (!token) {
+            return [];
+        }
+
+        console.log("Loading playlists!");
+        const {data} = await axios
+            .get("https://api.spotify.com/v1/me/playlists", {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+            })
+            .catch((error) => {
+                console.log(error);
+            });    
+
+        setUserPlaylists(data.items);
     }
 
 
@@ -115,70 +141,73 @@ function App() {
 
     const [listOfPlaylists, setListOfPlaylists] = useState ([]);
 
-    const [userPlaylists, SetUserPlaylists] = useState([
+    const [userPlaylists, setUserPlaylists] = useState([]);
+    /*
+    const [userPlaylists, setUserPlaylists] = useState([
         {
-            title: "Playlist 1",
+            name: "Playlist 1",
             miscData: "delete this later and replace w/ actual data",
             id: 0
         },
         {
-            title: "Playlist 2",
+            name: "Playlist 2",
             miscData: "delete this later and replace w/ actual data",
             id: 1
         },
         {
-            title: "Playlist 3",
+            name: "Playlist 3",
             miscData: "delete this later and replace w/ actual data",
             id: 2
         },
         {
-            title: "Playlist 4",
+            name: "Playlist 4",
             miscData: "delete this later and replace w/ actual data",
             id: 3
         },
         {
-            title: "Playlist 5",
+            name: "Playlist 5",
             miscData: "delete this later and replace w/ actual data",
             id: 4
         },
         {
-            title: "Playlist 6",
+            name: "Playlist 6",
             miscData: "delete this later and replace w/ actual data",
             id: 5
         },
         {
-            title: "Playlist 1",
+            name: "Playlist 1",
             miscData: "delete this later and replace w/ actual data",
             id: 6
         },
         {
-            title: "Playlist 2",
+            name: "Playlist 2",
             miscData: "delete this later and replace w/ actual data",
             id: 7
         },
         {
-            title: "Playlist 3",
+            name: "Playlist 3",
             miscData: "delete this later and replace w/ actual data",
             id: 8
         },
         {
-            title: "Playlist 4",
+            name: "Playlist 4",
             miscData: "delete this later and replace w/ actual data",
             id: 9
         },
         {
-            title: "Playlist 5",
+            name: "Playlist 5",
             miscData: "delete this later and replace w/ actual data",
             id: 10
         },
         {
-            title: "Playlist 6",
+            name: "Playlist 6",
             miscData: "delete this later and replace w/ actual data",
             id: 11
         }
     ]);
+    */
 
-    const [parameters, SetParameters] = useState([
+    const [parameters, setParameters] = useState([
         {
             name: "Parameter 1",
             data: 0,
@@ -241,7 +270,7 @@ function App() {
         }
     ]);
 
-    const [currentSong, SetCurrentSong] = useState(
+    const [currentSong, setCurrentSong] = useState(
         {
             title: "The World Is Yours",
             artist: "Nas",
@@ -270,7 +299,7 @@ function App() {
         setListOfPlaylists([...listOfPlaylists, newList[0]]);
 
         // Remove Playlist from left panel
-        SetUserPlaylists(userPlaylists.filter((userPlaylist) => userPlaylist.id !== id));
+        setUserPlaylists(userPlaylists.filter((userPlaylist) => userPlaylist.id !== id));
     }
 
     const deletePlaylist = (id) => {
@@ -278,7 +307,7 @@ function App() {
 
         // Send playlist back to left panel
         const newList = listOfPlaylists.filter((listOfPlaylist) => listOfPlaylist.id === id);
-        SetUserPlaylists([...userPlaylists, newList[0]]);
+        setUserPlaylists([...userPlaylists, newList[0]]);
 
         // Remove Playlist from UI
         setListOfPlaylists(listOfPlaylists.filter((listOfPlaylist) => listOfPlaylist.id != id));
@@ -323,8 +352,11 @@ function App() {
                     content = {
                         <div>
                             <Accordion
-                                label="Add Playlists to Generator" 
-                                content={<UserPlaylists playlists={userPlaylists} onAdd={addPlaylist}/>}
+                                label="Add Playlists to Generator"
+                                content={!token ? 
+                                    <div style={{margin: "0px 10px 0px 10px"}}><i>Please log in to view your playlists.</i></div>: 
+                                    <UserPlaylists playlists={userPlaylists} onAdd={addPlaylist}/>
+                                }    
                             />
 
                             <Parameters parameters={parameters} />
