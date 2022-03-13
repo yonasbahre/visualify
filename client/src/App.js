@@ -383,6 +383,7 @@ function App() {
                 <div>
                     <Genres token={token} songIDs={songIDs} />
                     <Features token={token} songIDs={songIDs} />
+                    <Recommendations token={token} features={features} songIDs={songIDs} />
                     <PlaylistItems token={token} playlistID={playlistID} />
                     <Playlists token={token} />
                 </div>
