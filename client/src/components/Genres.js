@@ -2,9 +2,6 @@ import {useState} from "react";
 import axios from 'axios';
 
 function Genres({token, songIDs}) {
-    const [tracks, setTracks] = useState([])
-    const [artistIDs, setArtistIDs] = useState([])
-    const [artistsInfo, setArtistsInfo] = useState([])
     const [genresMap, setGenresMap] = useState(new Map())
 
     const updateGenresMap = (key,value) => {
@@ -14,14 +11,14 @@ function Genres({token, songIDs}) {
     // build get request for get tracks
     let getTracksGetRequest = "https://api.spotify.com/v1/tracks?ids=";
     songIDs.forEach((songID) => {
-        getTracksGetRequest += songID +  "%";
+        getTracksGetRequest += songID +  "%2C";
     })
-    getTracksGetRequest = getTracksGetRequest.slice(0, -1);   // removes last %
+    getTracksGetRequest = getTracksGetRequest.slice(0, -3);   // removes last %
 
     // set up get request for get artists later
     let getArtistGetRequest = "https://api.spotify.com/v1/artists?ids=";
 
-    const getTracks = async (e) => {
+    const getGenres = async (e) => {
         // get tracks data
         e.preventDefault()
         const {data: tracksData} = await axios
@@ -33,18 +30,18 @@ function Genres({token, songIDs}) {
             .catch((error) => {
                 console.log(error);
             });
-
-        setTracks(tracksData.tracks)
+        console.log(tracksData);
 
         // get artist IDs from track data
         let tempArtistIDs = [];
         tracksData.tracks.forEach((track) => {
-            track.artists.forEach((artist) => {
-                tempArtistIDs.push(artist.id);
-            });
+            if (track) {
+                track.artists.forEach((artist) => {
+                    tempArtistIDs.push(artist.id);
+                });
+    
+            }
         });
-
-        setArtistIDs(tempArtistIDs);
 
         // build get request for get tracks
         tempArtistIDs.forEach((artistID) => {
@@ -63,70 +60,40 @@ function Genres({token, songIDs}) {
             .catch((error) => {
                 console.log(error);
             });
+        console.log(artistsData.artists);
         
-        setArtistsInfo(artistsData.artists)
+
+        // fill the genres map
+        artistsData.artists.forEach((artist) => {
+            const genres = artist.genres;
+            genres.forEach((genre) => {
+                if (genresMap.has(genre)) {
+                    updateGenresMap(genre, genresMap.get(genre) + 1);
+                } else {
+                    updateGenresMap(genre, 1);
+                }
+            });
+        });
+    
+        console.log(genresMap);
     }
 
-    console.log("tracks", tracks);
+    const renderGenres = () => {
+        return [...genresMap.keys()].map(k => (
+                <li key={k}>{k}: {genresMap.get(k)}</li>
+        ));
+    }
+    
 
-    console.log("artistIDs", artistIDs);
-
-    console.log("artistsInfo", artistsInfo);
-
-    // tracks.forEach((track) => {
-    //     const genres = track.artists.genres;
-    //     genres.forEach((genre) => {
-    //         if (genresMap.has(genre)) {
-    //             updateGenresMap(genre, genresMap.get(genre) + 1);
-    //         } else {
-    //             updateGenresMap(genre, 1);
-    //         }
-    //     });
-    // });
-
-    // console.log(genresMap);
-
-    // const getArtists = async (e) => {
-    //     console.log("getArtists");
-    //     e.preventDefault()
-    //     const {data} = await axios
-    //         .get(getArtistGetRequest, {
-    //             headers: {
-    //                 Authorization: `Bearer ${token}`
-    //             },
-    //         })
-    //         .catch((error) => {
-    //             console.log(error);
-    //         });
-    //         console.log(data);
-    //     setArtistsInfo(data)
-    // }
-
-
-    // tracks.forEach((track) => {
-    //     const genres = track.artists.genres;
-    //     genres.forEach((genre) => {
-    //         if (genresMap.has(genre)) {
-    //             updateGenresMap(genre, genresMap.get(genre) + 1);
-    //         } else {
-    //             updateGenresMap(genre, 1);
-    //         }
-    //     });
-    // });
-
-    // console.log(genresMap);
 
     return (
         <div id="features">
             { genresMap.size == 0 ? 
-                <button onClick={getTracks}>get genres</button>
+                <button onClick={getGenres}>get genres</button>
               : 
-            //   <ul>
-            //     {[genresMap.keys()].map(k => (
-            //         <li key={k}>k: genresMap.get(k)</li>
-            //     ))}
-            //   </ul>        
-            <p>genres</p>
+              <ul>
+                { renderGenres() }
+              </ul>        
             }
         </div>
     );

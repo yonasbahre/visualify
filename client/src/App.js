@@ -34,7 +34,7 @@ function App() {
     }
 
     const playlistID = "1LNoeW9X4ArpKeNnl0gPWK";
-    const songIDs = ["11dxtPJKR4E0wlSr0A0t47", "2C4VqPOruhp5EdPBeR92t6lQ"];
+    const songIDs = ["11dxtPJKR4E0wlSr0A0t47", "2C4VqPOruhp5EdPBeR92t6lQ", "37ynsCQ2PUTc9hbWygrbKy", "25z6kpmIwkCUqk2IORrJ5v"];
 
     return (
         <div id="App">
