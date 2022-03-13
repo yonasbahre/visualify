@@ -2,6 +2,7 @@ import {useEffect, useState} from "react";
 import Playlists from "./components/Playlists";
 import PlaylistItems from "./components/PlaylistItems";
 import Features from "./components/Features";
+import Genres from "./components/Genres";
 import './App.css';
 
 function App() {
@@ -33,7 +34,7 @@ function App() {
     }
 
     const playlistID = "1LNoeW9X4ArpKeNnl0gPWK";
-    const songIDs = ["11dxtPJKR4E0wlSr0A0t47", "2C4VqPOruhp5EdPBeR92t6lQ", "2C2takcwOaAZWiXQijPHIx7B"];
+    const songIDs = ["11dxtPJKR4E0wlSr0A0t47", "2C4VqPOruhp5EdPBeR92t6lQ"];
 
     return (
         <div id="App">
@@ -47,6 +48,7 @@ function App() {
              }
             {token ?
                 <div>
+                    <Genres token={token} songIDs={songIDs} />
                     <Features token={token} songIDs={songIDs} />
                     <PlaylistItems token={token} playlistID={playlistID} />
                     <Playlists token={token} />
