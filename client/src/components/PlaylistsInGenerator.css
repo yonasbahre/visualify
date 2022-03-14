@@ -1,6 +1,11 @@
 .PlaylistsInGenerator {
-    padding: 10px;
     height: 100%;
+    margin-left: 10px;
+    margin-right: 10px;
+    padding-top: 10px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
 }
 
 .SinglePlaylist {
@@ -13,5 +18,16 @@
 .Playlists {
     overflow-x: hidden;
     overflow-y: scroll;
-    max-height: 200px;
+    max-height: 150px;
+}
+
+.Generate {
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    position: absolute;
+    height: 50px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    bottom: 10px;
 }

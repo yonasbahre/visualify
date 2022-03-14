@@ -14,6 +14,8 @@ function PlaylistsInGenerator(props) {
                     <SinglePlaylist name={playlist.name} id={playlist.id} onDelete={props.onDelete}/>
                 ))}
             </div>
+
+            <button onClick={props.onGenerate} className="Generate">GENERATE!</button>
         </div>
     );
 }

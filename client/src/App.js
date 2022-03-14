@@ -74,6 +74,11 @@ function App() {
         setUserPlaylists(data.items);
     }
 
+    // Generate recommendations based on current parameters
+    const generateRecommendations = () => {
+        console.log("Generating recommendations!");
+    }
+
 
     // Sample Data
     const [newPlaylists, setNewPlaylists] = useState([
@@ -387,6 +392,7 @@ function App() {
                         content={<PlaylistsInGenerator 
                             playlists={listOfPlaylists}
                             onDelete={deletePlaylist}
+                            onGenerate={generateRecommendations}
                         />} 
                     />
                 </div>
