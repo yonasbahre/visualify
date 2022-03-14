@@ -36,12 +36,20 @@ function NewPlaylist(props) {
                 </input>
             </form>
 
+            <div>
+                {songs.length === 0 ? 
+                    <i>Songs you add to your playlist will appear here!</i>:
+                    <div className="SongList">
+                        {songs.map((song) => (
+                            <SongInPlaylist name={song.name} artist={song.artist} id={song.id} onDelete={props.onDelete}/>
+                        ))}
+                    </div>                   
 
-            <div className="SongList">
-                {songs.map((song) => (
-                    <SongInPlaylist title={song.title} artist={song.artist} id={song.id} onDelete={props.onDelete}/>
-                ))}
+                }
             </div>
+
+
+
 
             <button onClick={onSubmit} className="ExportToSpotify">EXPORT TO SPOTIFY</button>
         </div>

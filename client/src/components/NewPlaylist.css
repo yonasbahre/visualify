@@ -9,12 +9,12 @@
 }
 
 .NewPlaylist {
-    margin: 10px 10px 10px 10px;
+    margin: 0px 10px 10px 10px;
     height: 100%;
     position: relative;
     display: flex;
     flex-direction: column;
-    padding-top: 10px;
+    padding-top: 15px;
 }
 
 .PlaylistNameForm {

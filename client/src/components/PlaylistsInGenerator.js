@@ -4,6 +4,15 @@ import SinglePlaylist from "./SinglePlaylist";
 
 function PlaylistsInGenerator(props) {
     const playlists = props.playlists;
+
+    const isGeneratorEmpty = () => {
+        if (playlists.length === 0) {
+            alert("Please add at least one playlist to the generator!");
+            return;
+        }
+
+        props.onGenerate();
+    }
     
     return (
         <div className="PlaylistsInGenerator">
@@ -15,7 +24,7 @@ function PlaylistsInGenerator(props) {
                 ))}
             </div>
 
-            <button onClick={props.onGenerate} className="Generate">GENERATE!</button>
+            <button onClick={isGeneratorEmpty} className="Generate">GENERATE!</button>
         </div>
     );
 }

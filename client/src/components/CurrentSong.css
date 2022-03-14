@@ -1,3 +1,15 @@
+.CurrentSongEmpty {
+    background-color: white;
+    width: 600px;
+    height: 450px;
+    color: black;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+    text-align: center;
+    line-height: 450px;
+}
+
 .CurrentSong {
     background-color: white;
     width: 600px;
@@ -11,7 +23,7 @@
         "AddSong AddSong AddSong SkipSong SkipSong SkipSong";
     grid-template-columns: 100px 100px 100px 100px 100px 100px;
     grid-template-rows: 200px 200px 50px;
-    color: white;
+    color: black;
 }
 
 .Cover {

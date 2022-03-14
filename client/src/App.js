@@ -13,13 +13,27 @@ import CurrentSong from "./components/CurrentSong";
 import NewPlaylist from "./components/NewPlaylist";
 import PlaylistsInGenerator from "./components/PlaylistsInGenerator";
 import UserPlaylists from "./components/UserPlaylists";
+import Recommendations from "./components/Recommendations";
+import PreviewPlayer from "./components/PreviewPlayer";
+//import getRecs from "./components/Recommendations";
 
 function App() {
-    // Isabel's stuff
+    // URLs and Sample Data
     const CLIENT_ID = "b1973aa897914a7a8b045880ef919a81"
     const REDIRECT_URI = "http://localhost:3000/";
     const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize"
     const RESPONSE_TYPE = "token"
+
+    const playlistID = "1LNoeW9X4ArpKeNnl0gPWK";
+    let songIDs = ["11dxtPJKR4E0wlSr0A0t47", "37ynsCQ2PUTc9hbWygrbKy", "25z6kpmIwkCUqk2IORrJ5v", "25z6kpmIwkCUqk2IORrJ5v"];
+    const features = {
+        "danceability": "0.5",
+        "speechiness": "0.5",
+        "acousticness": "0.5",
+        "liveness": "0.5",
+        "happiness": "0.5",
+        "tempo": "110"
+    };
 
     const [token, setToken] = useState("")
 
@@ -39,110 +53,81 @@ function App() {
         // Load user playlists if they're logged in        
         if (token) {
             loadUserPlaylists(token);
-        }
-    
+            console.log("Token: " + token);
+        }    
 
     }, [])
 
-    const login = (e) => {
-        e.preventDefault();
-        window.location.href = `${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`;
-    }
+    // Song recommendations
+    const [recs, setRecs] = useState([]);
+    useEffect(() => {console.log("Size: " + recs.length)})
 
-    const logout = () => {
-        setToken("")
-        window.localStorage.removeItem("token")
-    }
+    // More sample Data
+    const [newPlaylists, setNewPlaylists] = useState([]);
 
-    // Loads user's playlists from the Spotify API
-    const loadUserPlaylists = async (token) => {
-        if (!token) {
-            return [];
-        }
-
-        console.log("Loading playlists!");
-        const {data} = await axios
-            .get("https://api.spotify.com/v1/me/playlists", {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                },
-            })
-            .catch((error) => {
-                console.log(error);
-            });    
-
-        setUserPlaylists(data.items);
-    }
-
-    // Generate recommendations based on current parameters
-    const generateRecommendations = () => {
-        console.log("Generating recommendations!");
-    }
-
-
-    // Sample Data
+    /*
     const [newPlaylists, setNewPlaylists] = useState([
         {
-            title: "Song 1",
+            name: "Song 1",
             artist: "Artist 1",
             id: 0
         },
         {
-            title: "Song 2",
+            name: "Song 2",
             artist: "Artist 2",
             id: 1
         },
         {
-            title: "Song 1",
+            name: "Song 1",
             artist: "Artist 1",
             id: 2
         },
         {
-            title: "Song 2",
+            name: "Song 2",
             artist: "Artist 2",
             id: 3
         },
         {
-            title: "Song 1",
+            name: "Song 1",
             artist: "Artist 1",
             id: 4
         },
         {
-            title: "Song 2",
+            name: "Song 2",
             artist: "Artist 2",
             id: 5
         },
         {
-            title: "Song 1",
+            name: "Song 1",
             artist: "Artist 1",
             id: 6
         },
         {
-            title: "Song 2",
+            name: "Song 2",
             artist: "Artist 2",
             id: 7
         },
         {
-            title: "Song 1",
+            name: "Song 1",
             artist: "Artist 1",
             id: 8
         },
         {
-            title: "Song 2",
+            name: "Song 2",
             artist: "Artist 2",
             id: 9
         },
         {
-            title: "Song 1",
+            name: "Song 1",
             artist: "Artist 1",
             id: 10
         },
         {
-            title: "Song 2",
+            name: "Song 2",
             artist: "Artist 2",
             id: 11
         }
-    ]);
+    ]); */
 
     const [listOfPlaylists, setListOfPlaylists] = useState ([]);
 
@@ -214,80 +199,227 @@ function App() {
 
     const [parameters, setParameters] = useState([
         {
-            name: "Parameter 1",
+            name: "Danceability",
             data: 0,
             chart: <h1>Chart go brrr</h1>
         },        
         {
-            name: "Parameter 2",
+            name: "Speechiness",
             data: 0,
             chart: <h1>Chart go brrr</h1>
         },
         {
-            name: "Parameter 3",
+            name: "Acousticness",
             data: 0,
             chart: <h1>Chart go brrr</h1>
         },
         {
-            name: "Parameter 1",
+            name: "Liveness",
             data: 0,
             chart: <h1>Chart go brrr</h1>
         },        
         {
-            name: "Parameter 2",
+            name: "Happiness",
             data: 0,
             chart: <h1>Chart go brrr</h1>
         },
         {
-            name: "Parameter 3",
-            data: 0,
-            chart: <h1>Chart go brrr</h1>
-        },
-        {
-            name: "Parameter 1",
-            data: 0,
-            chart: <h1>Chart go brrr</h1>
-        },        
-        {
-            name: "Parameter 2",
-            data: 0,
-            chart: <h1>Chart go brrr</h1>
-        },
-        {
-            name: "Parameter 3",
-            data: 0,
-            chart: <h1>Chart go brrr</h1>
-        },
-        {
-            name: "Parameter 1",
-            data: 0,
-            chart: <h1>Chart go brrr</h1>
-        },        
-        {
-            name: "Parameter 2",
-            data: 0,
-            chart: <h1>Chart go brrr</h1>
-        },
-        {
-            name: "Parameter 3",
+            name: "Tempo",
             data: 0,
             chart: <h1>Chart go brrr</h1>
         }
     ]);
 
+    /*
     const [currentSong, setCurrentSong] = useState(
         {
-            title: "The World Is Yours",
+            name: "The World Is Yours",
             artist: "Nas",
             album: "Illmatic",
             genre: "Hip-Hop/Rap",
             year: "1994"
         }
-    );
+    ); */
+
+    const [currentSong, setCurrentSong] = useState();
+    const [playerLink, setPlayerLink] = useState("https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT?si=2c4a5f07d56842c6");
 
     //==========================================================================
     //==========================================================================
     // Actual functionality here! Lmk if there's a better way to organize this
+    
+
+
+    const login = (e) => {
+        e.preventDefault();
+        window.location.href = `${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`;
+    }
+
+    const logout = () => {
+        setToken("")
+        window.localStorage.removeItem("token")
+        window.location.reload();
+    }
+
+    // Loads user's playlists from the Spotify API
+    const loadUserPlaylists = async (token) => {
+        if (!token) {
+            return [];
+        }
+
+        console.log("Loading playlists!");
+        const {data} = await axios
+            .get("https://api.spotify.com/v1/me/playlists", {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+            })
+            .catch((error) => {
+                console.log(error);
+            });    
+
+        setUserPlaylists(data.items);
+    }
+
+    // Get IDs of tracks in playlist
+    const getSongsFromPlaylist = async (token, playlistID) => {
+        let playlistSongs = [];
+        const getRequest = "https://api.spotify.com/v1/playlists/" + playlistID + "/tracks?fields=items(track(id%2C%20name))";
+
+        const {data} = await axios
+            .get(getRequest, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+
+        let items = data.items;
+        items.forEach((item) => {playlistSongs.push(item.track.id)});
+        return playlistSongs;
+    }
+
+    // Generate recommendations based on current parameters
+    const generateRecommendations = async () => {
+        console.log("Generating recommendations!");
+        // Extract songs IDs from each song in each playlist
+        let sampleSongIDs = [];
+        for (let i = 0; i < listOfPlaylists.length; i++) {
+            console.log("Playlist ID: " + listOfPlaylists[i].id);
+            const tempIDs = await getSongsFromPlaylist(token, listOfPlaylists[i].id); 
+            sampleSongIDs = sampleSongIDs.concat(tempIDs);
+        }
+        songIDs = sampleSongIDs;
+
+        // Print test: sampleSongIDs.forEach((sampleSongID) => {console.log("CurrSongID: " + sampleSongID)});
+        
+
+        let currRecs = [];
+        const totalRecLimit = 20;
+        const limitPerRequest = Math.ceil(50 / Math.ceil(songIDs.length/3));
+
+        const getRequest = (currentSongIDs, artistID, genre) => {
+            let getReq = "https://api.spotify.com/v1/recommendations?"
+                + "limit=" + limitPerRequest 
+                + "&seed_artists=" + artistID
+                + "&seed_genres=" + genre
+                + "&seed_tracks=";
+            currentSongIDs.forEach((songID) => {
+                getReq += songID + "%2C";
+            });
+            getReq = getReq.slice(0, -3);
+            getReq = getReq 
+                + "&target_acousticness=" + features.acousticness
+                + "&target_danceability=" + features.danceability 
+                + "&target_liveness=" + features.liveness
+                + "&target_speechiness=" + features.speechiness
+                + "&target_tempo=" + features.tempo
+                + "&target_valence=" + features.happiness;
+            
+            return getReq;
+        };
+
+        let tempRecs = []
+        // loops through 3 songs at a time 
+        for (let i = 0; i < songIDs.length; i+=3) {
+            // use three songs per recommendation
+            const currentSongIDs = songIDs.slice(i, i + 3);
+
+            // get the the track data as tracksData
+            //e.persist()
+            const {data: tracksData} = await axios
+            .get("https://api.spotify.com/v1/tracks?ids=" + songIDs[i], {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+            // the first artist of the first song in currentSongIDs
+            const artist = tracksData.tracks[0].artists[0];
+            
+            // get the artists data as artistsData
+            const {data: artistsData} = await axios
+                .get("https://api.spotify.com/v1/artists?ids=" + artist.id, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    },
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+            // the first genre of artist
+            const genre = artistsData.artists[0].genres[0];
+
+            // get recommended songs
+            const {data} = await axios
+                .get(getRequest(currentSongIDs, artist.id, genre), {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    },
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+            
+            // add songs from request to array
+            tempRecs = tempRecs.concat(data.tracks);
+        }
+
+        // remove any duplicate songs
+        // https://stackoverflow.com/questions/2218999/how-to-remove-all-duplicates-from-an-array-of-objects
+        let uniqueRecs = tempRecs.filter((value, index) => {
+            const _value = JSON.stringify(value);
+            return index === tempRecs.findIndex(obj => {
+              return JSON.stringify(obj) === _value;
+            });
+        });
+
+        // limits length of array to totalRecLimit
+        if (uniqueRecs.length > totalRecLimit) {
+            uniqueRecs = uniqueRecs.slice(0, totalRecLimit);
+        }
+          
+        currRecs = uniqueRecs;
+        console.log("I work! Length: " + currRecs.length);
+        setRecs(currRecs);
+        setCurrentSong(
+            {
+                index: 0,
+                song: currRecs[0],
+                name: currRecs[0].name,
+                artist: currRecs[0].artists[0].name,
+                album: currRecs[0].album.name,
+                year: currRecs[0].album.release_date.substring(0, 4),
+                image: currRecs[0].album.images[0].url,
+                link: "https://open.spotify.com/track/" + currRecs[0].id
+            }
+        );
+        setPlayerLink("https://open.spotify.com/track/" + currRecs[0].id);    
+    }
 
     const deleteSong = (id) => {
         // Put code here to actually remove song from wherever you're storing the playlist
@@ -298,6 +430,7 @@ function App() {
     
     const addPlaylist = (id) => {
         // Put code here to actually add the playlist data to the app
+        
 
         // Add playlist to right panel
         const newList = userPlaylists.filter((userPlaylist) => userPlaylist.id === id); 
@@ -320,12 +453,48 @@ function App() {
 
     // Adds current song to playlist
     const addSong = () => {
+        // Add song to new playlist
+        setNewPlaylists([...newPlaylists,
+            {
+                song: currentSong.song,
+                name: currentSong.name,
+                artist: currentSong.artist,
+                id: currentSong.song.id
+            }
+        ]);
 
+        // Going to next song
+        const currIndex = currentSong.index + 1;
+        setPlayerLink("https://open.spotify.com/track/" + recs[currIndex].id);
+        setCurrentSong(
+            {
+                index: currIndex,
+                song: recs[currIndex],
+                name: recs[currIndex].name,
+                artist: recs[currIndex].artists[0].name,
+                album: recs[currIndex].album.name,
+                year: recs[currIndex].album.release_date.substring(0, 4),
+                image: recs[currIndex].album.images[0].url
+            }
+        ); 
     }
 
     // Skips current song, does NOT add song to playlist
     const skipSong = () => {
-
+        // Going to next song
+        const currIndex = currentSong.index + 1;
+        setPlayerLink("https://open.spotify.com/track/" + recs[currIndex].id);
+        setCurrentSong(
+            {
+                index: currIndex,
+                song: recs[currIndex],
+                name: recs[currIndex].name,
+                artist: recs[currIndex].artists[0].name,
+                album: recs[currIndex].album.name,
+                year: recs[currIndex].album.release_date.substring(0, 4),
+                image: recs[currIndex].album.images[0].url
+            }
+        ); 
     }
 
     // Exports playlist to Spotify
@@ -375,6 +544,7 @@ function App() {
                         addSong={addSong}
                         skipSong={skipSong}
                     />
+                    <PreviewPlayer playerLink={playerLink}/>
                 </div>
 
                 <div className="rightConsole">
@@ -404,17 +574,6 @@ function App() {
         </div>
     );
 
-
-    const playlistID = "1LNoeW9X4ArpKeNnl0gPWK";
-    const songIDs = ["11dxtPJKR4E0wlSr0A0t47", "37ynsCQ2PUTc9hbWygrbKy", "25z6kpmIwkCUqk2IORrJ5v", "25z6kpmIwkCUqk2IORrJ5v"];
-    const features = {
-        "danceability": "0.5",
-        "speechiness": "0.5",
-        "acousticness": "0.5",
-        "liveness": "0.5",
-        "happiness": "0.5",
-        "tempo": "110"
-    };
 
     /* Commenting out the button so I can add basic UI elements
     return (

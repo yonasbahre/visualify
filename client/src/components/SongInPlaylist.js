@@ -7,7 +7,7 @@ function SongInPlaylist(props) {
     return (
         <div className="SongInPlaylist">
             <div className="SongTitle">
-                <div>{props.title}</div>
+                <div>{props.name}</div>
                 <div><FaTrashAlt onClick={() => props.onDelete(props.id)} style={{cursor: "pointer"}}/></div>
             </div>
 
