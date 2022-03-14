@@ -1,4 +1,5 @@
 import {useEffect, useState} from "react";
+import { Component } from "react";
 import axios from 'axios';
 
 import Playlists from "./components/Playlists";
@@ -15,7 +16,9 @@ import PlaylistsInGenerator from "./components/PlaylistsInGenerator";
 import UserPlaylists from "./components/UserPlaylists";
 import Recommendations from "./components/Recommendations";
 import PreviewPlayer from "./components/PreviewPlayer";
-//import getRecs from "./components/Recommendations";
+//import Graphs from "./components/Graphs";
+//import SliderComp from "./components/SliderComp";
+import SlideComponent from "./components/SlideComponent";
 
 function App() {
     // URLs and Sample Data
@@ -26,6 +29,7 @@ function App() {
 
     const playlistID = "1LNoeW9X4ArpKeNnl0gPWK";
     let songIDs = ["11dxtPJKR4E0wlSr0A0t47", "37ynsCQ2PUTc9hbWygrbKy", "25z6kpmIwkCUqk2IORrJ5v", "25z6kpmIwkCUqk2IORrJ5v"];
+    /*
     const features = {
         "danceability": "0.5",
         "speechiness": "0.5",
@@ -33,7 +37,16 @@ function App() {
         "liveness": "0.5",
         "happiness": "0.5",
         "tempo": "110"
-    };
+    }; */
+
+    const [features, setFeatures] = useState({
+        "danceability": "0.5",
+        "speechiness": "0.5",
+        "acousticness": "0.5",
+        "liveness": "0.5",
+        "happiness": "0.5",
+        "tempo": "110"
+    });
 
     const [token, setToken] = useState("")
 
@@ -197,36 +210,53 @@ function App() {
     ]);
     */
 
+    const updateParams = (index, value) => {
+        let x = parameters;
+        x[index].data = value / 100;
+        console.log("Val: " + x[index].data);
+        setParameters(x);
+
+        setFeatures({
+            "danceability": x[0].data,
+            "speechiness": x[1].data,
+            "acousticness": x[2].data,
+            "liveness": x[3].data,
+            "happiness": x[4].data,
+            "tempo": "110"
+        });
+    }
+
     const [parameters, setParameters] = useState([
         {
             name: "Danceability",
-            data: 0,
-            chart: <h1>Chart go brrr</h1>
+            data: 0.5,
+            chart: <div className="SlideComponent"><SlideComponent index={0} updateParams={updateParams} /> </div> 
+            
         },        
         {
             name: "Speechiness",
-            data: 0,
-            chart: <h1>Chart go brrr</h1>
+            data: 0.5,
+            chart: <div className="SlideComponent"><SlideComponent index={1} updateParams={updateParams} /> </div>
         },
         {
             name: "Acousticness",
-            data: 0,
-            chart: <h1>Chart go brrr</h1>
+            data: 0.5,
+            chart: <div className="SlideComponent"><SlideComponent index={2} updateParams={updateParams} /> </div>
         },
         {
             name: "Liveness",
-            data: 0,
-            chart: <h1>Chart go brrr</h1>
+            data: 0.5,
+            chart: <div className="SlideComponent"><SlideComponent index={3} updateParams={updateParams} /> </div>
         },        
         {
             name: "Happiness",
-            data: 0,
-            chart: <h1>Chart go brrr</h1>
+            data: 0.5,
+            chart: <div className="SlideComponent"><SlideComponent index={4} updateParams={updateParams} /> </div>
         },
         {
             name: "Tempo",
-            data: 0,
-            chart: <h1>Chart go brrr</h1>
+            data: 0.5,
+            chart: <div className="SlideComponent"><SlideComponent index={5} updateParams={updateParams} /> </div>
         }
     ]);
 
@@ -534,6 +564,8 @@ function App() {
                             />
 
                             <Parameters parameters={parameters} />
+                            
+
                         </div>
                     } 
                 />

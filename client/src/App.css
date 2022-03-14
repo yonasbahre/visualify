@@ -44,3 +44,8 @@ button:hover {
     height: 600px;
     justify-content: space-evenly;
 }
+
+.SlideComponent {
+    justify-content: center;
+    padding-left: 150px;
+}
