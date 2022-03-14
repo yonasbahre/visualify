@@ -1,0 +1,16 @@
+.Accordion {
+    background-color: white;
+}
+
+.header {
+    background-color: whitesmoke;
+    font-size: x-large;
+    padding: 5px 15px 5px 5px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.header:hover {
+    background-color: lightgrey;
+    cursor: pointer;
+}
