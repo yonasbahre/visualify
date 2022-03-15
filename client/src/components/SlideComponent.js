@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import './Slider.css'
 
 import { Slider } from '@material-ui/core';
 import { makeStyles } from "@material-ui/core/styles";
