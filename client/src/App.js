@@ -66,6 +66,8 @@ function App() {
     const [recs, setRecs] = useState([]);
     useEffect(() => {console.log("Size: " + recs.length)})
 
+    const [isLoading, setIsLoading] = useState(false);
+
     const [newPlaylists, setNewPlaylists] = useState([]);
 
     const [listOfPlaylists, setListOfPlaylists] = useState ([]);
@@ -196,6 +198,7 @@ function App() {
     // Generate recommendations based on current parameters
     const generateRecommendations = async () => {
         console.log("Generating recommendations!");
+        setIsLoading(true);
         // Extract songs IDs from each song in each playlist
         let sampleSongIDs = [];
         for (let i = 0; i < listOfPlaylists.length; i++) {
@@ -310,6 +313,7 @@ function App() {
             }
         );
         setPlayerLink("https://open.spotify.com/track/" + currRecs[0].id);   
+        setIsLoading(false);
     }
 
     const deleteSong = (id) => {
@@ -437,14 +441,18 @@ function App() {
                     } 
                 />
 
+                {isLoading ?
+                    <div id="loader"></div>
+                : 
                 <div className="centerConsole">
-                    <CurrentSong 
-                        currentSong={currentSong}
-                        addSong={addSong}
-                        skipSong={skipSong}
-                    />
-                    <PreviewPlayer playerLink={playerLink}/>
-                </div>
+                        <CurrentSong 
+                            currentSong={currentSong}
+                            addSong={addSong}
+                            skipSong={skipSong}
+                        />
+                        <PreviewPlayer playerLink={playerLink}/>
+                    </div>
+                }
 
                 <div className="rightConsole">
                     <Console 
