@@ -10,7 +10,6 @@ function PlaylistsInGenerator(props) {
             alert("Please add at least one playlist to the generator!");
             return;
         }
-
         props.onGenerate();
     }
     
@@ -23,8 +22,8 @@ function PlaylistsInGenerator(props) {
                     <SinglePlaylist name={playlist.name} id={playlist.id} onDelete={props.onDelete}/>
                 ))}
             </div>
-
-            <button onClick={isGeneratorEmpty} className="Generate">GENERATE!</button>
+            
+            <button id="generate-button" onClick={isGeneratorEmpty} className="Generate">GENERATE!</button>
         </div>
     );
 }

@@ -27,17 +27,7 @@ function App() {
     const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize"
     const RESPONSE_TYPE = "token"
 
-    const playlistID = "1LNoeW9X4ArpKeNnl0gPWK";
-    let songIDs = ["11dxtPJKR4E0wlSr0A0t47", "37ynsCQ2PUTc9hbWygrbKy", "25z6kpmIwkCUqk2IORrJ5v", "25z6kpmIwkCUqk2IORrJ5v"];
-    /*
-    const features = {
-        "danceability": "0.5",
-        "speechiness": "0.5",
-        "acousticness": "0.5",
-        "liveness": "0.5",
-        "happiness": "0.5",
-        "tempo": "110"
-    }; */
+    let songIDs = [];
 
     const [features, setFeatures] = useState({
         "danceability": "0.5",
@@ -75,140 +65,13 @@ function App() {
     const [recs, setRecs] = useState([]);
     useEffect(() => {console.log("Size: " + recs.length)})
 
-    // More sample Data
-    const [newPlaylists, setNewPlaylists] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
 
-    /*
-    const [newPlaylists, setNewPlaylists] = useState([
-        {
-            name: "Song 1",
-            artist: "Artist 1",
-            id: 0
-        },
-        {
-            name: "Song 2",
-            artist: "Artist 2",
-            id: 1
-        },
-        {
-            name: "Song 1",
-            artist: "Artist 1",
-            id: 2
-        },
-        {
-            name: "Song 2",
-            artist: "Artist 2",
-            id: 3
-        },
-        {
-            name: "Song 1",
-            artist: "Artist 1",
-            id: 4
-        },
-        {
-            name: "Song 2",
-            artist: "Artist 2",
-            id: 5
-        },
-        {
-            name: "Song 1",
-            artist: "Artist 1",
-            id: 6
-        },
-        {
-            name: "Song 2",
-            artist: "Artist 2",
-            id: 7
-        },
-        {
-            name: "Song 1",
-            artist: "Artist 1",
-            id: 8
-        },
-        {
-            name: "Song 2",
-            artist: "Artist 2",
-            id: 9
-        },
-        {
-            name: "Song 1",
-            artist: "Artist 1",
-            id: 10
-        },
-        {
-            name: "Song 2",
-            artist: "Artist 2",
-            id: 11
-        }
-    ]); */
+    const [newPlaylists, setNewPlaylists] = useState([]);
 
     const [listOfPlaylists, setListOfPlaylists] = useState ([]);
 
     const [userPlaylists, setUserPlaylists] = useState([]);
-    /*
-    const [userPlaylists, setUserPlaylists] = useState([
-        {
-            name: "Playlist 1",
-            miscData: "delete this later and replace w/ actual data",
-            id: 0
-        },
-        {
-            name: "Playlist 2",
-            miscData: "delete this later and replace w/ actual data",
-            id: 1
-        },
-        {
-            name: "Playlist 3",
-            miscData: "delete this later and replace w/ actual data",
-            id: 2
-        },
-        {
-            name: "Playlist 4",
-            miscData: "delete this later and replace w/ actual data",
-            id: 3
-        },
-        {
-            name: "Playlist 5",
-            miscData: "delete this later and replace w/ actual data",
-            id: 4
-        },
-        {
-            name: "Playlist 6",
-            miscData: "delete this later and replace w/ actual data",
-            id: 5
-        },
-        {
-            name: "Playlist 1",
-            miscData: "delete this later and replace w/ actual data",
-            id: 6
-        },
-        {
-            name: "Playlist 2",
-            miscData: "delete this later and replace w/ actual data",
-            id: 7
-        },
-        {
-            name: "Playlist 3",
-            miscData: "delete this later and replace w/ actual data",
-            id: 8
-        },
-        {
-            name: "Playlist 4",
-            miscData: "delete this later and replace w/ actual data",
-            id: 9
-        },
-        {
-            name: "Playlist 5",
-            miscData: "delete this later and replace w/ actual data",
-            id: 10
-        },
-        {
-            name: "Playlist 6",
-            miscData: "delete this later and replace w/ actual data",
-            id: 11
-        }
-    ]);
-    */
 
     const updateParams = (index, value) => {
         let x = parameters;
@@ -259,17 +122,6 @@ function App() {
             chart: <div className="SlideComponent"><SlideComponent index={5} updateParams={updateParams} /> </div>
         }
     ]);
-
-    /*
-    const [currentSong, setCurrentSong] = useState(
-        {
-            name: "The World Is Yours",
-            artist: "Nas",
-            album: "Illmatic",
-            genre: "Hip-Hop/Rap",
-            year: "1994"
-        }
-    ); */
 
     const [currentSong, setCurrentSong] = useState();
     const [playerLink, setPlayerLink] = useState("https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT?si=2c4a5f07d56842c6");
@@ -334,6 +186,7 @@ function App() {
     // Generate recommendations based on current parameters
     const generateRecommendations = async () => {
         console.log("Generating recommendations!");
+        setIsLoading(true);
         // Extract songs IDs from each song in each playlist
         let sampleSongIDs = [];
         for (let i = 0; i < listOfPlaylists.length; i++) {
@@ -449,6 +302,7 @@ function App() {
             }
         );
         setPlayerLink("https://open.spotify.com/track/" + currRecs[0].id);    
+        setIsLoading(false);
     }
 
     const deleteSong = (id) => {
@@ -564,20 +418,23 @@ function App() {
                             />
 
                             <Parameters parameters={parameters} />
-                            
-
                         </div>
                     } 
                 />
 
+                {isLoading ?
+                    <div id="loader"></div>
+                : 
                 <div className="centerConsole">
-                    <CurrentSong 
-                        currentSong={currentSong}
-                        addSong={addSong}
-                        skipSong={skipSong}
-                    />
-                    <PreviewPlayer playerLink={playerLink}/>
-                </div>
+                        <CurrentSong 
+                            currentSong={currentSong}
+                            addSong={addSong}
+                            skipSong={skipSong}
+                        />
+                        <PreviewPlayer playerLink={playerLink}/>
+                    </div>
+                }
+
 
                 <div className="rightConsole">
                     <Console 
@@ -599,38 +456,8 @@ function App() {
                     />
                 </div>
             </div>
-
-
-
-
         </div>
     );
-
-
-    /* Commenting out the button so I can add basic UI elements
-    return (
-        <div id="App">
-            <div id="App-header">
-                <h1>Spotify React</h1>
-            </div>
-            {!token ?
-                <a href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`}>
-                    Login to Spotify</a>
-                : <button onClick={logout}>Logout</button>
-             }
-            {token ?
-                <div>
-                    <Genres token={token} songIDs={songIDs} />
-                    <Features token={token} songIDs={songIDs} />
-                    <Recommendations token={token} features={features} songIDs={songIDs} />
-                    <PlaylistItems token={token} playlistID={playlistID} />
-                    <Playlists token={token} />
-                </div>
-                : <h2>Please login</h2>
-            }
-        </div>
-    );
-    */
 }
 
 export default App;
