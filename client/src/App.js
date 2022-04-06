@@ -28,24 +28,15 @@ function App() {
     const RESPONSE_TYPE = "token"
 
     const playlistID = "1LNoeW9X4ArpKeNnl0gPWK";
-    let songIDs = ["11dxtPJKR4E0wlSr0A0t47", "37ynsCQ2PUTc9hbWygrbKy", "25z6kpmIwkCUqk2IORrJ5v", "25z6kpmIwkCUqk2IORrJ5v"];
-    /*
-    const features = {
-        "danceability": "0.5",
-        "speechiness": "0.5",
-        "acousticness": "0.5",
-        "liveness": "0.5",
-        "happiness": "0.5",
-        "tempo": "110"
-    }; */
+    let songIDs = [];
 
     const [features, setFeatures] = useState({
-        "danceability": "0.5",
-        "speechiness": "0.5",
-        "acousticness": "0.5",
-        "liveness": "0.5",
-        "happiness": "0.5",
-        "tempo": "110"
+        "danceability": "50",
+        "speechiness": "50",
+        "acousticness": "50",
+        "liveness": "50",
+        "happiness": "50",
+        "tempo": "50"
     });
 
     const [token, setToken] = useState("")
@@ -75,145 +66,18 @@ function App() {
     const [recs, setRecs] = useState([]);
     useEffect(() => {console.log("Size: " + recs.length)})
 
-    // More sample Data
-    const [newPlaylists, setNewPlaylists] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
 
-    /*
-    const [newPlaylists, setNewPlaylists] = useState([
-        {
-            name: "Song 1",
-            artist: "Artist 1",
-            id: 0
-        },
-        {
-            name: "Song 2",
-            artist: "Artist 2",
-            id: 1
-        },
-        {
-            name: "Song 1",
-            artist: "Artist 1",
-            id: 2
-        },
-        {
-            name: "Song 2",
-            artist: "Artist 2",
-            id: 3
-        },
-        {
-            name: "Song 1",
-            artist: "Artist 1",
-            id: 4
-        },
-        {
-            name: "Song 2",
-            artist: "Artist 2",
-            id: 5
-        },
-        {
-            name: "Song 1",
-            artist: "Artist 1",
-            id: 6
-        },
-        {
-            name: "Song 2",
-            artist: "Artist 2",
-            id: 7
-        },
-        {
-            name: "Song 1",
-            artist: "Artist 1",
-            id: 8
-        },
-        {
-            name: "Song 2",
-            artist: "Artist 2",
-            id: 9
-        },
-        {
-            name: "Song 1",
-            artist: "Artist 1",
-            id: 10
-        },
-        {
-            name: "Song 2",
-            artist: "Artist 2",
-            id: 11
-        }
-    ]); */
+    const [newPlaylists, setNewPlaylists] = useState([]);
 
     const [listOfPlaylists, setListOfPlaylists] = useState ([]);
 
     const [userPlaylists, setUserPlaylists] = useState([]);
-    /*
-    const [userPlaylists, setUserPlaylists] = useState([
-        {
-            name: "Playlist 1",
-            miscData: "delete this later and replace w/ actual data",
-            id: 0
-        },
-        {
-            name: "Playlist 2",
-            miscData: "delete this later and replace w/ actual data",
-            id: 1
-        },
-        {
-            name: "Playlist 3",
-            miscData: "delete this later and replace w/ actual data",
-            id: 2
-        },
-        {
-            name: "Playlist 4",
-            miscData: "delete this later and replace w/ actual data",
-            id: 3
-        },
-        {
-            name: "Playlist 5",
-            miscData: "delete this later and replace w/ actual data",
-            id: 4
-        },
-        {
-            name: "Playlist 6",
-            miscData: "delete this later and replace w/ actual data",
-            id: 5
-        },
-        {
-            name: "Playlist 1",
-            miscData: "delete this later and replace w/ actual data",
-            id: 6
-        },
-        {
-            name: "Playlist 2",
-            miscData: "delete this later and replace w/ actual data",
-            id: 7
-        },
-        {
-            name: "Playlist 3",
-            miscData: "delete this later and replace w/ actual data",
-            id: 8
-        },
-        {
-            name: "Playlist 4",
-            miscData: "delete this later and replace w/ actual data",
-            id: 9
-        },
-        {
-            name: "Playlist 5",
-            miscData: "delete this later and replace w/ actual data",
-            id: 10
-        },
-        {
-            name: "Playlist 6",
-            miscData: "delete this later and replace w/ actual data",
-            id: 11
-        }
-    ]);
-    */
 
     const updateParams = (index, value) => {
+        console.log("updateParams", value);
         let x = parameters;
-        x[index].data = value / 100;
-        console.log("Val: " + x[index].data);
+        x[index].data = value;
         setParameters(x);
 
         setFeatures({
@@ -222,41 +86,41 @@ function App() {
             "acousticness": x[2].data,
             "liveness": x[3].data,
             "happiness": x[4].data,
-            "tempo": "110"
+            "tempo": "50"
         });
     }
 
     const [parameters, setParameters] = useState([
         {
             name: "Danceability",
-            data: 0.5,
-            chart: <div className="SlideComponent"><SlideComponent index={0} updateParams={updateParams} /> </div> 
+            data: 50,
+            chart: <div className="SlideComponent"><SlideComponent index={0} value={features.danceability} updateParams={updateParams} /> </div> 
             
         },        
         {
             name: "Speechiness",
-            data: 0.5,
-            chart: <div className="SlideComponent"><SlideComponent index={1} updateParams={updateParams} /> </div>
+            data: 50,
+            chart: <div className="SlideComponent"><SlideComponent index={1} value={features.speechiness} updateParams={updateParams} /> </div>
         },
         {
             name: "Acousticness",
-            data: 0.5,
-            chart: <div className="SlideComponent"><SlideComponent index={2} updateParams={updateParams} /> </div>
+            data: 50,
+            chart: <div className="SlideComponent"><SlideComponent index={2} value={features.acousticness} updateParams={updateParams} /> </div>
         },
         {
             name: "Liveness",
-            data: 0.5,
-            chart: <div className="SlideComponent"><SlideComponent index={3} updateParams={updateParams} /> </div>
+            data: 50,
+            chart: <div className="SlideComponent"><SlideComponent index={3} value={features.liveness} updateParams={updateParams} /> </div>
         },        
         {
             name: "Happiness",
-            data: 0.5,
-            chart: <div className="SlideComponent"><SlideComponent index={4} updateParams={updateParams} /> </div>
+            data: 50,
+            chart: <div className="SlideComponent"><SlideComponent index={4} value={features.happiness} updateParams={updateParams} /> </div>
         },
         {
             name: "Tempo",
-            data: 0.5,
-            chart: <div className="SlideComponent"><SlideComponent index={5} updateParams={updateParams} /> </div>
+            data: 50,
+            chart: <div className="SlideComponent"><SlideComponent index={5} value={features.tempo} updateParams={updateParams} /> </div>
         }
     ]);
 
@@ -334,10 +198,10 @@ function App() {
     // Generate recommendations based on current parameters
     const generateRecommendations = async () => {
         console.log("Generating recommendations!");
+        setIsLoading(true);
         // Extract songs IDs from each song in each playlist
         let sampleSongIDs = [];
         for (let i = 0; i < listOfPlaylists.length; i++) {
-            console.log("Playlist ID: " + listOfPlaylists[i].id);
             const tempIDs = await getSongsFromPlaylist(token, listOfPlaylists[i].id); 
             sampleSongIDs = sampleSongIDs.concat(tempIDs);
         }
@@ -365,7 +229,7 @@ function App() {
                 + "&target_danceability=" + features.danceability 
                 + "&target_liveness=" + features.liveness
                 + "&target_speechiness=" + features.speechiness
-                + "&target_tempo=" + features.tempo
+                // + "&target_tempo=" + features.tempo
                 + "&target_valence=" + features.happiness;
             
             return getReq;
@@ -448,7 +312,8 @@ function App() {
                 link: "https://open.spotify.com/track/" + currRecs[0].id
             }
         );
-        setPlayerLink("https://open.spotify.com/track/" + currRecs[0].id);    
+        setPlayerLink("https://open.spotify.com/track/" + currRecs[0].id);   
+        setIsLoading(false);
     }
 
     const deleteSong = (id) => {
@@ -563,21 +428,31 @@ function App() {
                                 }    
                             />
 
-                            <Parameters parameters={parameters} />
+                            <Accordion
+                                label="Audio Features"
+                                content={!token ? 
+                                    <div style={{margin: "0px 10px 0px 10px"}}><i>Please log in to view your playlists.</i></div>: 
+                                    <Parameters parameters={parameters} />
+                                }    
+                            />
                             
 
                         </div>
                     } 
                 />
 
+                {isLoading ?
+                    <div id="loader"></div>
+                : 
                 <div className="centerConsole">
-                    <CurrentSong 
-                        currentSong={currentSong}
-                        addSong={addSong}
-                        skipSong={skipSong}
-                    />
-                    <PreviewPlayer playerLink={playerLink}/>
-                </div>
+                        <CurrentSong 
+                            currentSong={currentSong}
+                            addSong={addSong}
+                            skipSong={skipSong}
+                        />
+                        <PreviewPlayer playerLink={playerLink}/>
+                    </div>
+                }
 
                 <div className="rightConsole">
                     <Console 

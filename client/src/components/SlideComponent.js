@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
-import './Slider.css'
 
 import { Slider } from '@material-ui/core';
 import { makeStyles } from "@material-ui/core/styles";
 import { Button } from 'rsuite';
 
 function SlideComponent(props) {
+    console.log("Slide Component, props", props);
     
 
     const useStyles = makeStyles(theme => ({
@@ -25,7 +25,7 @@ function SlideComponent(props) {
         <div>
             <Slider 
                 className="sliderStyling"
-                value={props.value}
+                defaultValue={props.value}
                 onChange={updateSlide}
                 classes={{rail: classes.rail}} 
             />

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Accordion from "./Accordion";
 import Parameter from "./Parameter";
 
 function Parameters(props) {
@@ -8,10 +7,7 @@ function Parameters(props) {
     return(
         <div>
             {parameters.map((parameter) => (
-                <Accordion
-                    label={parameter.name}
-                    content=<Parameter parameter={parameter}/>
-                />
+                <Parameter parameter={parameter}/>
             ))}
         </div>
     );
