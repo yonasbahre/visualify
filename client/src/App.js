@@ -1,11 +1,6 @@
 import {useEffect, useState} from "react";
-import { Component } from "react";
 import axios from 'axios';
 
-import Playlists from "./components/Playlists";
-import PlaylistItems from "./components/PlaylistItems";
-import Features from "./components/Features";
-import Genres from "./components/Genres";
 import './App.css';
 import Console from "./components/Consoles";
 import Accordion from "./components/Accordion";
@@ -14,7 +9,6 @@ import CurrentSong from "./components/CurrentSong";
 import NewPlaylist from "./components/NewPlaylist";
 import PlaylistsInGenerator from "./components/PlaylistsInGenerator";
 import UserPlaylists from "./components/UserPlaylists";
-import Recommendations from "./components/Recommendations";
 import PreviewPlayer from "./components/PreviewPlayer";
 //import Graphs from "./components/Graphs";
 //import SliderComp from "./components/SliderComp";
@@ -123,17 +117,6 @@ function App() {
             chart: <div className="SlideComponent"><SlideComponent index={5} value={features.tempo} updateParams={updateParams} /> </div>
         }
     ]);
-
-    /*
-    const [currentSong, setCurrentSong] = useState(
-        {
-            name: "The World Is Yours",
-            artist: "Nas",
-            album: "Illmatic",
-            genre: "Hip-Hop/Rap",
-            year: "1994"
-        }
-    ); */
 
     const [currentSong, setCurrentSong] = useState();
     const [playerLink, setPlayerLink] = useState("https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT?si=2c4a5f07d56842c6");
@@ -425,7 +408,7 @@ function App() {
                                 content={!token ? 
                                     <div style={{margin: "0px 10px 0px 10px"}}><i>Please log in to view your playlists.</i></div>: 
                                     <UserPlaylists playlists={userPlaylists} onAdd={addPlaylist}/>
-                                }    
+                                } 
                             />
 
                             <Accordion
@@ -433,10 +416,8 @@ function App() {
                                 content={!token ? 
                                     <div style={{margin: "0px 10px 0px 10px"}}><i>Please log in to view your playlists.</i></div>: 
                                     <Parameters parameters={parameters} />
-                                }    
+                                }
                             />
-                            
-
                         </div>
                     } 
                 />
@@ -474,38 +455,8 @@ function App() {
                     />
                 </div>
             </div>
-
-
-
-
         </div>
     );
-
-
-    /* Commenting out the button so I can add basic UI elements
-    return (
-        <div id="App">
-            <div id="App-header">
-                <h1>Spotify React</h1>
-            </div>
-            {!token ?
-                <a href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`}>
-                    Login to Spotify</a>
-                : <button onClick={logout}>Logout</button>
-             }
-            {token ?
-                <div>
-                    <Genres token={token} songIDs={songIDs} />
-                    <Features token={token} songIDs={songIDs} />
-                    <Recommendations token={token} features={features} songIDs={songIDs} />
-                    <PlaylistItems token={token} playlistID={playlistID} />
-                    <Playlists token={token} />
-                </div>
-                : <h2>Please login</h2>
-            }
-        </div>
-    );
-    */
 }
 
 export default App;
