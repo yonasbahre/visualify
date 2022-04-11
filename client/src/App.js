@@ -74,11 +74,6 @@ function App() {
         x[index].data = value;
         x[index].chart = 
         <div className="SlideComponent"><SlideComponent index={index} value={value} updateParams={updateParams} /> </div> ;
-        // if updating tempo, have to include min/max
-        if (index == 5) {
-            x[index].chart = 
-            <div className="SlideComponent"><SlideComponent index={index} value={value} min={90} max={150} step={1} updateParams={updateParams} /> </div> ;    
-        }
         setParameters(x);
 
         setFeatures({
@@ -121,7 +116,7 @@ function App() {
         {
             name: "Tempo",
             data: features.tempo,
-            chart: <div className="SlideComponent"><SlideComponent index={5} value={features.tempo} min={90} max={150} step={1} updateParams={updateParams} /> </div>
+            chart: <div className="SlideComponent"><SlideComponent index={5} value={features.tempo} updateParams={updateParams} /> </div>
         }
     ]);
 
@@ -194,7 +189,7 @@ function App() {
 
     function getTempoAverage(tempoTotal, length) {
         if (length > 0) {
-            return ((tempoTotal / length)).toFixed();
+            return (((tempoTotal / length)-90)/0.6).toFixed();
         }
         return -1;
     }
