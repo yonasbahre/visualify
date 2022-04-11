@@ -4,8 +4,6 @@ import { Slider } from '@material-ui/core';
 import { makeStyles } from "@material-ui/core/styles";
 
 function SlideComponent(props) {
-    console.log(props);
-
     const useStyles = makeStyles(theme => ({
         rail: {
           background: "lightgrey"

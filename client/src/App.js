@@ -72,6 +72,9 @@ function App() {
     const updateParams = (index, value) => {
         let x = parameters;
         x[index].data = value;
+        if (index == 5) {
+            x[index].data = (value*0.6)+90;
+        }
         x[index].chart = 
         <div className="SlideComponent"><SlideComponent index={index} value={value} updateParams={updateParams} /> </div> ;
         setParameters(x);
@@ -259,14 +262,10 @@ function App() {
         // Extract songs IDs from each song in each playlist
         let sampleSongIDs = [];
         for (let i = 0; i < listOfPlaylists.length; i++) {
-            console.log("Playlist ID: " + listOfPlaylists[i].id);
             const tempIDs = await getSongsFromPlaylist(token, listOfPlaylists[i].id); 
             sampleSongIDs = sampleSongIDs.concat(tempIDs);
         }
-        songIDs = sampleSongIDs;
-
-        // Print test: sampleSongIDs.forEach((sampleSongID) => {console.log("CurrSongID: " + sampleSongID)});
-        
+        songIDs = sampleSongIDs;        
 
         let currRecs = [];
         const totalRecLimit = 20;
