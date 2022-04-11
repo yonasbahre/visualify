@@ -2,10 +2,6 @@ import {useEffect, useState} from "react";
 import { Component } from "react";
 import axios from 'axios';
 
-import Playlists from "./components/Playlists";
-import PlaylistItems from "./components/PlaylistItems";
-import Features from "./components/Features";
-import Genres from "./components/Genres";
 import './App.css';
 import Console from "./components/Consoles";
 import Accordion from "./components/Accordion";
@@ -30,12 +26,12 @@ function App() {
     let songIDs = [];
 
     const [features, setFeatures] = useState({
-        "danceability": "0.5",
-        "speechiness": "0.5",
-        "acousticness": "0.5",
-        "liveness": "0.5",
-        "happiness": "0.5",
-        "tempo": "110"
+        "danceability": "0",
+        "speechiness": "0",
+        "acousticness": "0",
+        "liveness": "0",
+        "happiness": "0",
+        "tempo": "0"
     });
 
     const [token, setToken] = useState("")
@@ -75,8 +71,9 @@ function App() {
 
     const updateParams = (index, value) => {
         let x = parameters;
-        x[index].data = value / 100;
-        console.log("Val: " + x[index].data);
+        x[index].data = value;
+        x[index].chart = 
+        <div className="SlideComponent"><SlideComponent index={index} value={value} updateParams={updateParams} /> </div> ;
         setParameters(x);
 
         setFeatures({
@@ -85,41 +82,41 @@ function App() {
             "acousticness": x[2].data,
             "liveness": x[3].data,
             "happiness": x[4].data,
-            "tempo": "110"
+            "tempo": x[5].data,
         });
     }
 
     const [parameters, setParameters] = useState([
         {
             name: "Danceability",
-            data: 0.5,
-            chart: <div className="SlideComponent"><SlideComponent index={0} updateParams={updateParams} /> </div> 
+            data: features.danceability,
+            chart: <div className="SlideComponent"><SlideComponent index={0} value={features.danceability} updateParams={updateParams} /> </div> 
             
         },        
         {
             name: "Speechiness",
-            data: 0.5,
-            chart: <div className="SlideComponent"><SlideComponent index={1} updateParams={updateParams} /> </div>
+            data: features.speechiness,
+            chart: <div className="SlideComponent"><SlideComponent index={1} value={features.speechiness} updateParams={updateParams} /> </div>
         },
         {
             name: "Acousticness",
-            data: 0.5,
-            chart: <div className="SlideComponent"><SlideComponent index={2} updateParams={updateParams} /> </div>
+            data: features.acousticness,
+            chart: <div className="SlideComponent"><SlideComponent index={2} value={features.acousticness} updateParams={updateParams} /> </div>
         },
         {
             name: "Liveness",
-            data: 0.5,
-            chart: <div className="SlideComponent"><SlideComponent index={3} updateParams={updateParams} /> </div>
+            data: features.liveness,
+            chart: <div className="SlideComponent"><SlideComponent index={3} value={features.liveness} updateParams={updateParams} /> </div>
         },        
         {
             name: "Happiness",
-            data: 0.5,
-            chart: <div className="SlideComponent"><SlideComponent index={4} updateParams={updateParams} /> </div>
+            data: features.happiness,
+            chart: <div className="SlideComponent"><SlideComponent index={4} value={features.happiness} updateParams={updateParams} /> </div>
         },
         {
             name: "Tempo",
-            data: 0.5,
-            chart: <div className="SlideComponent"><SlideComponent index={5} updateParams={updateParams} /> </div>
+            data: features.tempo,
+            chart: <div className="SlideComponent"><SlideComponent index={5} value={features.tempo} updateParams={updateParams} /> </div>
         }
     ]);
 
@@ -181,6 +178,78 @@ function App() {
         let items = data.items;
         items.forEach((item) => {playlistSongs.push(item.track.id)});
         return playlistSongs;
+    }
+
+    function getFeatureAverage(featureTotal, length) {
+        if (length > 0) {
+            return ((featureTotal / length)*100).toFixed();
+        }
+        return -1;
+    }
+
+    function getTempoAverage(tempoTotal, length) {
+        if (length > 0) {
+            return (((tempoTotal / length)-90)/0.6).toFixed();
+        }
+        return -1;
+    }
+
+    // get audio features from songs
+    const getAudioFeaturesFromSongsAndUpdate = async (token, songs) => {
+        let danceabilityTotal = 0;
+        let speechinessTotal = 0;
+        let acousticnessTotal = 0;
+        let livenessTotal = 0;
+        let happinessTotal = 0;
+        let tempoTotal = 0;
+
+        let getRequest = "https://api.spotify.com/v1/audio-features?ids=";
+        songs.forEach((song) => {
+            getRequest += song.id +  "%2C";
+        })
+        getRequest = getRequest.slice(0, -3);   // removes last %
+    
+        const {data} = await axios
+            .get(getRequest, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+
+        if (data) {
+            data.audio_features.forEach((song) => {
+                danceabilityTotal += song.danceability;
+                speechinessTotal += song.speechiness;
+                acousticnessTotal += song.acousticness;
+                livenessTotal += song.liveness;
+                happinessTotal += song.valence; // renamed to happiness
+                tempoTotal += song.tempo;
+            });
+    
+            const length = data.audio_features.length;
+    
+            const danceability = getFeatureAverage(danceabilityTotal, length);
+            const speechiness = getFeatureAverage(speechinessTotal, length);
+            const acousticness = getFeatureAverage(acousticnessTotal, length);
+            const liveness = getFeatureAverage(livenessTotal, length);
+            const happiness = getFeatureAverage(happinessTotal, length);
+            const tempo = getTempoAverage(tempoTotal, length);
+    
+            const temp = {
+                "danceability": danceability,
+                "speechiness": speechiness,
+                "acousticness": acousticness,
+                "liveness": liveness,
+                "happiness": happiness,
+                "tempo": tempo,
+            }
+    
+            return temp;
+        }
+        return -1;
     }
 
     // Generate recommendations based on current parameters
@@ -302,8 +371,20 @@ function App() {
             }
         );
         setPlayerLink("https://open.spotify.com/track/" + currRecs[0].id);    
+       
+        const tempFeatures = await getAudioFeaturesFromSongsAndUpdate(token, currRecs);
+        if (tempFeatures != -1) {
+            updateParams(0, tempFeatures.danceability);
+            updateParams(1, tempFeatures.speechiness);
+            updateParams(2, tempFeatures.acousticness);
+            updateParams(3, tempFeatures.liveness);
+            updateParams(4, tempFeatures.happiness);
+            updateParams(5, tempFeatures.tempo);
+        }
+
         setIsLoading(false);
     }
+
 
     const deleteSong = (id) => {
         // Put code here to actually remove song from wherever you're storing the playlist
