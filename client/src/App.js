@@ -115,6 +115,8 @@ function App() {
         }
     ]);
 
+    const [isExpanded, setisExpanded] = useState(false);
+
     const [currentSong, setCurrentSong] = useState();
     const [playerLink, setPlayerLink] = useState("https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT?si=2c4a5f07d56842c6");
 
@@ -247,6 +249,7 @@ function App() {
     const generateRecommendations = async () => {
         console.log("Generating recommendations!");
         setIsLoading(true);
+        setisExpanded(false);
         // Extract songs IDs from each song in each playlist
         let sampleSongIDs = [];
         for (let i = 0; i < listOfPlaylists.length; i++) {
@@ -372,6 +375,7 @@ function App() {
             updateParams(5, tempFeatures.tempo);
         }
 
+        setisExpanded(false);
         setIsLoading(false);
     }
 
@@ -490,6 +494,7 @@ function App() {
                             <Accordion
                                 id="audio-features-accordion"
                                 label="Audio Features"
+                                isActive={isExpanded}
                                 content={!token 
                                     ? <div style={{margin: "0px 10px 0px 10px"}}><i>Please log in to view your playlists.</i></div>
                                     : recs.length == 0 
