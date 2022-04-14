@@ -75,8 +75,8 @@ function App() {
             if (index == 5) {
                 x[index].data = (value*0.6) + 90;
             }
-            x[index].chart = 
-                <div className="KnobComponent"><KnobComponent index={index} value={value} updateParams={updateParams} /> </div>
+            // x[index].chart = 
+            //     <div className="KnobComponent"><KnobComponent index={index} value={value} updateParams={updateParams} /> </div>
             setParameters(x);
     
             setFeatures({
@@ -95,32 +95,38 @@ function App() {
         {
             name: "Danceability",
             data: features.danceability,
-            chart:  <div className="KnobComponent"><KnobComponent index={0} value={features.danceability} updateParams={updateParams} /></div>             
+            index: 0,
+            // chart:  <div className="KnobComponent"><KnobComponent index={0} value={features.danceability} updateParams={updateParams} /></div>             
         },        
         {
             name: "Speechiness",
             data: features.speechiness,
-            chart: <div className="KnobComponent"><KnobComponent index={1} value={features.speechiness} updateParams={updateParams} /> </div>
+            index: 1,
+            // chart: <div className="KnobComponent"><KnobComponent index={1} value={features.speechiness} updateParams={updateParams} /> </div>
         },
         {
             name: "Acousticness",
             data: features.acousticness,
-            chart: <div className="KnobComponent"><KnobComponent index={2} value={features.acousticness} updateParams={updateParams} /> </div>
+            index: 2,
+            // chart: <div className="KnobComponent"><KnobComponent index={2} value={features.acousticness} updateParams={updateParams} /> </div>
         },
         {
             name: "Liveness",
             data: features.liveness,
-            chart: <div className="KnobComponent"><KnobComponent index={3} value={features.liveness} updateParams={updateParams} /> </div>
+            index: 3,
+            // chart: <div className="KnobComponent"><KnobComponent index={3} value={features.liveness} updateParams={updateParams} /> </div>
         },        
         {
             name: "Happiness",
             data: features.happiness,
-            chart: <div className="KnobComponent"><KnobComponent index={4} value={features.happiness} updateParams={updateParams} /> </div>
+            index: 4,
+            // chart: <div className="KnobComponent"><KnobComponent index={4} value={features.happiness} updateParams={updateParams} /> </div>
         },
         {
             name: "Tempo",
             data: features.tempo,
-            chart: <div className="KnobComponent"><KnobComponent index={5} value={features.tempo} updateParams={updateParams} /> </div>
+            index: 5,
+            // chart: <div className="KnobComponent"><KnobComponent index={5} value={features.tempo} updateParams={updateParams} /> </div>
         }
     ]);
 
@@ -191,13 +197,6 @@ function App() {
         return -1;
     }
 
-    function getTempoAverage(tempoTotal, length) {
-        if (length > 0) {
-            return (((tempoTotal / length)-90)/0.6).toFixed();
-        }
-        return -1;
-    }
-
     // get audio features from songs
     const getAudioFeaturesFromSongsAndUpdate = async (token, songs) => {
         let danceabilityTotal = 0;
@@ -240,7 +239,7 @@ function App() {
             const acousticness = getFeatureAverage(acousticnessTotal, length);
             const liveness = getFeatureAverage(livenessTotal, length);
             const happiness = getFeatureAverage(happinessTotal, length);
-            const tempo = getTempoAverage(tempoTotal, length);
+            const tempo = getFeatureAverage(tempoTotal, length);
     
             const temp = {
                 "danceability": danceability,
@@ -255,7 +254,7 @@ function App() {
         }
         return -1;
     }
-
+    console.log(features);
     // Generate recommendations based on current parameters
     const generateRecommendations = async () => {
         console.log("Generating recommendations!");
@@ -337,6 +336,7 @@ function App() {
                     },
                 })
                 .catch((error) => {
+                    console.log(recommendationGetRequest(currentSongIDs, artist.id, genre));
                     console.log(error);
                 });
             
@@ -505,7 +505,7 @@ function App() {
                                 label="Audio Features"
                                 content={!token ? 
                                     <div style={{margin: "0px 10px 0px 10px"}}><i>Please log in to view your playlists.</i></div>: 
-                                    <Parameters parameters={parameters} />
+                                    <Parameters parameters={parameters} updateParams={updateParams} />
                                 }
                             />
 
