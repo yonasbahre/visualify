@@ -5,9 +5,9 @@ function Parameters(props) {
     const parameters = props.parameters;
     
     return(
-        <div>
+        <div id="parameters">
             {parameters.map((parameter) => (
-                <Parameter parameter={parameter}/>
+                <Parameter key={parameter.name} parameter={parameter}/>
             ))}
         </div>
     );

@@ -1,21 +1,20 @@
-import React, { useState } from "react";
+import React, { useState } from 'react'
+
 import { Basic } from 'react-dial-knob';
 
-import "./Parameters.css"
+function KnobComponent(props) {
+    const [value, setValue] = useState(props.value);
 
-function Parameter(props) {
-    const [value, setValue] = useState(props.data);
 
-    const updateKnob = (data) => {
+    const updateKnob = (e, data) => {
         // console.log("updateKnob", props.index);
         // props.updateParams(props.index, data);
         setValue(data);
     }
 
     return (
-        <div className="Parameter">
-            {props.parameter.name}
-            <Basic 
+        <div>
+            {/* <Basic 
                 diameter={100} 
                 min={0}
                 max={100} 
@@ -25,9 +24,9 @@ function Parameter(props) {
                 ariaLabelledBy={"label"}
             > 
                 <p>{props.data}</p>
-            </Basic>
+            </Basic> */}
         </div>
     );
 }
 
-export default Parameter;
+export default KnobComponent;

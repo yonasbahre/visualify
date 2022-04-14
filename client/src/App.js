@@ -12,7 +12,7 @@ import UserPlaylists from "./components/UserPlaylists";
 import PreviewPlayer from "./components/PreviewPlayer";
 //import Graphs from "./components/Graphs";
 //import SliderComp from "./components/SliderComp";
-import SlideComponent from "./components/SlideComponent";
+import KnobComponent from "./components/KnobComponent";
 
 function App() {
     // URLs and Sample Data
@@ -21,7 +21,6 @@ function App() {
     const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize"
     const RESPONSE_TYPE = "token"
 
-    const playlistID = "1LNoeW9X4ArpKeNnl0gPWK";
     let songIDs = [];
 
     const [features, setFeatures] = useState({
@@ -71,50 +70,57 @@ function App() {
     const updateParams = (index, value) => {
         console.log("updateParams", value);
         let x = parameters;
-        x[index].data = value;
-        setParameters(x);
+        if (value != null) {
+            x[index].data = value;
+            if (index == 5) {
+                x[index].data = (value*0.6) + 90;
+            }
+            x[index].chart = 
+                <div className="KnobComponent"><KnobComponent index={index} value={value} updateParams={updateParams} /> </div>
+            setParameters(x);
+    
+            setFeatures({
+                "danceability": x[0].data,
+                "speechiness": x[1].data,
+                "acousticness": x[2].data,
+                "liveness": x[3].data,
+                "happiness": x[4].data,
+                "tempo": x[5].data
+            });
+        }
 
-        setFeatures({
-            "danceability": x[0].data,
-            "speechiness": x[1].data,
-            "acousticness": x[2].data,
-            "liveness": x[3].data,
-            "happiness": x[4].data,
-            "tempo": "50"
-        });
     }
 
     const [parameters, setParameters] = useState([
         {
             name: "Danceability",
-            data: 50,
-            chart: <div className="SlideComponent"><SlideComponent index={0} value={features.danceability} updateParams={updateParams} /> </div> 
-            
+            data: features.danceability,
+            chart:  <div className="KnobComponent"><KnobComponent index={0} value={features.danceability} updateParams={updateParams} /></div>             
         },        
         {
             name: "Speechiness",
-            data: 50,
-            chart: <div className="SlideComponent"><SlideComponent index={1} value={features.speechiness} updateParams={updateParams} /> </div>
+            data: features.speechiness,
+            chart: <div className="KnobComponent"><KnobComponent index={1} value={features.speechiness} updateParams={updateParams} /> </div>
         },
         {
             name: "Acousticness",
-            data: 50,
-            chart: <div className="SlideComponent"><SlideComponent index={2} value={features.acousticness} updateParams={updateParams} /> </div>
+            data: features.acousticness,
+            chart: <div className="KnobComponent"><KnobComponent index={2} value={features.acousticness} updateParams={updateParams} /> </div>
         },
         {
             name: "Liveness",
-            data: 50,
-            chart: <div className="SlideComponent"><SlideComponent index={3} value={features.liveness} updateParams={updateParams} /> </div>
+            data: features.liveness,
+            chart: <div className="KnobComponent"><KnobComponent index={3} value={features.liveness} updateParams={updateParams} /> </div>
         },        
         {
             name: "Happiness",
-            data: 50,
-            chart: <div className="SlideComponent"><SlideComponent index={4} value={features.happiness} updateParams={updateParams} /> </div>
+            data: features.happiness,
+            chart: <div className="KnobComponent"><KnobComponent index={4} value={features.happiness} updateParams={updateParams} /> </div>
         },
         {
             name: "Tempo",
-            data: 50,
-            chart: <div className="SlideComponent"><SlideComponent index={5} value={features.tempo} updateParams={updateParams} /> </div>
+            data: features.tempo,
+            chart: <div className="KnobComponent"><KnobComponent index={5} value={features.tempo} updateParams={updateParams} /> </div>
         }
     ]);
 
@@ -178,6 +184,78 @@ function App() {
         return playlistSongs;
     }
 
+    function getFeatureAverage(featureTotal, length) {
+        if (length > 0) {
+            return ((featureTotal / length)*100).toFixed();
+        }
+        return -1;
+    }
+
+    function getTempoAverage(tempoTotal, length) {
+        if (length > 0) {
+            return (((tempoTotal / length)-90)/0.6).toFixed();
+        }
+        return -1;
+    }
+
+    // get audio features from songs
+    const getAudioFeaturesFromSongsAndUpdate = async (token, songs) => {
+        let danceabilityTotal = 0;
+        let speechinessTotal = 0;
+        let acousticnessTotal = 0;
+        let livenessTotal = 0;
+        let happinessTotal = 0;
+        let tempoTotal = 0;
+
+        let getRequest = "https://api.spotify.com/v1/audio-features?ids=";
+        songs.forEach((song) => {
+            getRequest += song.id +  "%2C";
+        })
+        getRequest = getRequest.slice(0, -3);   // removes last %
+    
+        const {data} = await axios
+            .get(getRequest, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+
+        if (data) {
+            data.audio_features.forEach((song) => {
+                danceabilityTotal += song.danceability;
+                speechinessTotal += song.speechiness;
+                acousticnessTotal += song.acousticness;
+                livenessTotal += song.liveness;
+                happinessTotal += song.valence; // renamed to happiness
+                tempoTotal += song.tempo;
+            });
+    
+            const length = data.audio_features.length;
+    
+            const danceability = getFeatureAverage(danceabilityTotal, length);
+            const speechiness = getFeatureAverage(speechinessTotal, length);
+            const acousticness = getFeatureAverage(acousticnessTotal, length);
+            const liveness = getFeatureAverage(livenessTotal, length);
+            const happiness = getFeatureAverage(happinessTotal, length);
+            const tempo = getTempoAverage(tempoTotal, length);
+    
+            const temp = {
+                "danceability": danceability,
+                "speechiness": speechiness,
+                "acousticness": acousticness,
+                "liveness": liveness,
+                "happiness": happiness,
+                "tempo": tempo,
+            }
+    
+            return temp;
+        }
+        return -1;
+    }
+
     // Generate recommendations based on current parameters
     const generateRecommendations = async () => {
         console.log("Generating recommendations!");
@@ -197,7 +275,7 @@ function App() {
         const totalRecLimit = 20;
         const limitPerRequest = Math.ceil(50 / Math.ceil(songIDs.length/3));
 
-        const getRequest = (currentSongIDs, artistID, genre) => {
+        const recommendationGetRequest = (currentSongIDs, artistID, genre) => {
             let getReq = "https://api.spotify.com/v1/recommendations?"
                 + "limit=" + limitPerRequest 
                 + "&seed_artists=" + artistID
@@ -253,7 +331,7 @@ function App() {
 
             // get recommended songs
             const {data} = await axios
-                .get(getRequest(currentSongIDs, artist.id, genre), {
+                .get(recommendationGetRequest(currentSongIDs, artist.id, genre), {
                     headers: {
                         Authorization: `Bearer ${token}`
                     },
@@ -296,6 +374,17 @@ function App() {
             }
         );
         setPlayerLink("https://open.spotify.com/track/" + currRecs[0].id);   
+
+        const tempFeatures = await getAudioFeaturesFromSongsAndUpdate(token, currRecs);
+        if (tempFeatures != -1) {
+            updateParams(0, tempFeatures.danceability);
+            updateParams(1, tempFeatures.speechiness);
+            updateParams(2, tempFeatures.acousticness);
+            updateParams(3, tempFeatures.liveness);
+            updateParams(4, tempFeatures.happiness);
+            updateParams(5, tempFeatures.tempo);
+        }
+
         setIsLoading(false);
     }
 
@@ -411,6 +500,7 @@ function App() {
                                 } 
                             />
 
+
                             <Accordion
                                 label="Audio Features"
                                 content={!token ? 
@@ -418,6 +508,8 @@ function App() {
                                     <Parameters parameters={parameters} />
                                 }
                             />
+
+
                         </div>
                     } 
                 />
