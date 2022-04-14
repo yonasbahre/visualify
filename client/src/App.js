@@ -10,9 +10,6 @@ import NewPlaylist from "./components/NewPlaylist";
 import PlaylistsInGenerator from "./components/PlaylistsInGenerator";
 import UserPlaylists from "./components/UserPlaylists";
 import PreviewPlayer from "./components/PreviewPlayer";
-//import Graphs from "./components/Graphs";
-//import SliderComp from "./components/SliderComp";
-import KnobComponent from "./components/KnobComponent";
 
 function App() {
     // URLs and Sample Data
@@ -24,12 +21,12 @@ function App() {
     let songIDs = [];
 
     const [features, setFeatures] = useState({
-        "danceability": "50",
-        "speechiness": "50",
-        "acousticness": "50",
-        "liveness": "50",
-        "happiness": "50",
-        "tempo": "50"
+        "danceability": 50,
+        "speechiness": 50,
+        "acousticness": 50,
+        "liveness": 50,
+        "happiness": 50,
+        "tempo": 110,
     });
 
     const [token, setToken] = useState("")
@@ -57,7 +54,7 @@ function App() {
 
     // Song recommendations
     const [recs, setRecs] = useState([]);
-    useEffect(() => {console.log("Size: " + recs.length)})
+    // useEffect(() => {console.log("Size: " + recs.length)})
 
     const [isLoading, setIsLoading] = useState(false);
 
@@ -68,15 +65,9 @@ function App() {
     const [userPlaylists, setUserPlaylists] = useState([]);
 
     const updateParams = (index, value) => {
-        console.log("updateParams", value);
         let x = parameters;
         if (value != null) {
             x[index].data = value;
-            if (index == 5) {
-                x[index].data = (value*0.6) + 90;
-            }
-            // x[index].chart = 
-            //     <div className="KnobComponent"><KnobComponent index={index} value={value} updateParams={updateParams} /> </div>
             setParameters(x);
     
             setFeatures({
@@ -96,37 +87,31 @@ function App() {
             name: "Danceability",
             data: features.danceability,
             index: 0,
-            // chart:  <div className="KnobComponent"><KnobComponent index={0} value={features.danceability} updateParams={updateParams} /></div>             
         },        
         {
             name: "Speechiness",
             data: features.speechiness,
             index: 1,
-            // chart: <div className="KnobComponent"><KnobComponent index={1} value={features.speechiness} updateParams={updateParams} /> </div>
         },
         {
             name: "Acousticness",
             data: features.acousticness,
             index: 2,
-            // chart: <div className="KnobComponent"><KnobComponent index={2} value={features.acousticness} updateParams={updateParams} /> </div>
         },
         {
             name: "Liveness",
             data: features.liveness,
             index: 3,
-            // chart: <div className="KnobComponent"><KnobComponent index={3} value={features.liveness} updateParams={updateParams} /> </div>
         },        
         {
             name: "Happiness",
             data: features.happiness,
             index: 4,
-            // chart: <div className="KnobComponent"><KnobComponent index={4} value={features.happiness} updateParams={updateParams} /> </div>
         },
         {
             name: "Tempo",
             data: features.tempo,
             index: 5,
-            // chart: <div className="KnobComponent"><KnobComponent index={5} value={features.tempo} updateParams={updateParams} /> </div>
         }
     ]);
 
@@ -190,8 +175,11 @@ function App() {
         return playlistSongs;
     }
 
-    function getFeatureAverage(featureTotal, length) {
+    function getFeatureAverage(featureTotal, length, isTempo) {
         if (length > 0) {
+            if (isTempo) {
+                return (featureTotal / length).toFixed();                
+            }
             return ((featureTotal / length)*100).toFixed();
         }
         return -1;
@@ -234,12 +222,12 @@ function App() {
     
             const length = data.audio_features.length;
     
-            const danceability = getFeatureAverage(danceabilityTotal, length);
-            const speechiness = getFeatureAverage(speechinessTotal, length);
-            const acousticness = getFeatureAverage(acousticnessTotal, length);
-            const liveness = getFeatureAverage(livenessTotal, length);
-            const happiness = getFeatureAverage(happinessTotal, length);
-            const tempo = getFeatureAverage(tempoTotal, length);
+            const danceability = getFeatureAverage(danceabilityTotal, length, false);
+            const speechiness = getFeatureAverage(speechinessTotal, length, false);
+            const acousticness = getFeatureAverage(acousticnessTotal, length, false);
+            const liveness = getFeatureAverage(livenessTotal, length, false);
+            const happiness = getFeatureAverage(happinessTotal, length, false);
+            const tempo = getFeatureAverage(tempoTotal, length, true);
     
             const temp = {
                 "danceability": danceability,
@@ -254,7 +242,7 @@ function App() {
         }
         return -1;
     }
-    console.log(features);
+
     // Generate recommendations based on current parameters
     const generateRecommendations = async () => {
         console.log("Generating recommendations!");
@@ -336,7 +324,6 @@ function App() {
                     },
                 })
                 .catch((error) => {
-                    console.log(recommendationGetRequest(currentSongIDs, artist.id, genre));
                     console.log(error);
                 });
             
@@ -359,7 +346,7 @@ function App() {
         }
           
         currRecs = uniqueRecs;
-        console.log("I work! Length: " + currRecs.length);
+        // console.log("I work! Length: " + currRecs.length);
         setRecs(currRecs);
         setCurrentSong(
             {
@@ -494,22 +481,23 @@ function App() {
                         <div>
                             <Accordion
                                 label="Add Playlists to Generator"
-                                content={!token ? 
-                                    <div style={{margin: "0px 10px 0px 10px"}}><i>Please log in to view your playlists.</i></div>: 
-                                    <UserPlaylists playlists={userPlaylists} onAdd={addPlaylist}/>
+                                content={!token 
+                                    ? <div style={{margin: "0px 10px 0px 10px"}}><i>Please log in to view your playlists.</i></div>
+                                    : <UserPlaylists playlists={userPlaylists} onAdd={addPlaylist}/>
                                 } 
                             />
 
-
                             <Accordion
+                                id="audio-features-accordion"
                                 label="Audio Features"
-                                content={!token ? 
-                                    <div style={{margin: "0px 10px 0px 10px"}}><i>Please log in to view your playlists.</i></div>: 
-                                    <Parameters parameters={parameters} updateParams={updateParams} />
-                                }
+                                content={!token 
+                                    ? <div style={{margin: "0px 10px 0px 10px"}}><i>Please log in to view your playlists.</i></div>
+                                    : recs.length == 0 
+                                    ? <div style={{margin: "0px 10px 0px 10px"}}><i>Please add at least one playlist to the generator and generate.</i></div>
+                                    : <Parameters parameters={parameters} updateParams={updateParams} />
+
+                                } 
                             />
-
-
                         </div>
                     } 
                 />

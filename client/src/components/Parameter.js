@@ -19,7 +19,7 @@ function Parameter(props) {
                 <Basic 
                     diameter={100} 
                     min={90}
-                    max={150} 
+                    max={160} 
                     step={1}
                     value={value}
                     onValueChange={updateKnob}
