@@ -50,6 +50,12 @@ button:hover {
     padding-left: 150px;
 }
 
+#parameters {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
 #loader {
     position: absolute;
     left: 50%;

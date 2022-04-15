@@ -1,13 +1,11 @@
 import React, { useState } from "react";
 import Parameter from "./Parameter";
 
-function Parameters(props) {
-    const parameters = props.parameters;
-    
+function Parameters({parameters, updateParams}) {
     return(
-        <div>
+        <div id="parameters">
             {parameters.map((parameter) => (
-                <Parameter parameter={parameter}/>
+                <Parameter key={parameter.name} parameter={parameter} updateParams={updateParams}/>
             ))}
         </div>
     );
