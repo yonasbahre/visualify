@@ -1,0 +1,9 @@
+.graph_input  {
+  display: flex;
+  flex-direction: "row"
+}
+
+.inputs {
+  display: flex;
+  flex-direction: "column"
+}
