@@ -49,6 +49,29 @@ button:active {
     justify-content: space-evenly;
 }
 
+.SongTiles {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  background-color: white;
+  width: 600px;
+  height: 470px;
+}
+
+.TopTiles {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+
+
+}
+
+.BottomTiles {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+
 .SlideComponent {
     justify-content: center;
     padding-left: 150px;
