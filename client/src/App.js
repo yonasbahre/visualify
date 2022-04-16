@@ -22,6 +22,43 @@ function App() {
 
     let songIDs = [];
 
+    // Percentages for each decade in pie chart
+    const [proportions, setProportions] = useState([]);
+    useEffect(() => {}, [proportions]);
+
+    const [songYears, setSongYears] = useState([]);
+    // Updates pie chart when songs are added to new playlist
+    useEffect(() => {
+        // Get the decade each song is from
+        let tempYears = [];
+        let numSongs = songYears.length;
+        songYears.forEach(year => {
+            tempYears.push(year.substring(0, 3) + "0");
+        });
+        console.log(tempYears);
+
+        // Get number of times each decade occurs
+        let newProportions = [];
+        tempYears.forEach(year => {
+            let found = newProportions.find(decade => decade.label === year);
+
+            if (found === undefined) {
+                newProportions.push({"label": year, "proportion": 1});
+            }
+            else {
+                found.proportion++;
+            }
+        });
+
+        // Convert number of times each decade occurs to a proportion
+        newProportions.forEach(decade => {
+            decade.proportion = (decade.proportion / numSongs) * 100;
+        });
+
+        console.log(newProportions);
+        setProportions(newProportions);
+    }, [songYears]);
+
     const [features, setFeatures] = useState({
         "danceability": 50,
         "speechiness": 50,
@@ -386,6 +423,7 @@ function App() {
 
         // Remove song from UI
         setNewPlaylists(newPlaylists.filter((newPlaylist) => newPlaylist.id !== id));
+        getSongYears();
     }
     
     const addPlaylist = (id) => {
@@ -437,6 +475,9 @@ function App() {
                 image: recs[currIndex].album.images[0].url
             }
         ); 
+
+        getSongYears();
+        console.log(songYears);
     }
 
     // Skips current song, does NOT add song to playlist
@@ -462,14 +503,15 @@ function App() {
         console.log("Exported playlist " + name + "!");
     }
 
-    // Graph data --- FOR TESTING PUPRPOSES
-    const temp1 = [40, 20, 40];
-    const temp3 = [{"label": "2010s", "proportion": 50}, {"label": "2020s", "proportion": 30}, {"label": "1990s", "proportion": 20}];
-    const temp4 = [];
-    const [proportions, setProportions] = useState(temp3);
-    useEffect(() => {}, [proportions]);
+    // Sets values for pie when song is added/removed to new playlist
+    const getSongYears = () => {
+        setSongYears(newPlaylists.map(song => song.song.album.release_date.substring(0, 4)));
+    }
 
+    // Fake pie chart data --- FOR TESTING PUPRPOSES
+    // const temp = [{"label": "2010s", "proportion": 50}, {"label": "2020s", "proportion": 30}, {"label": "1990s", "proportion": 20}];
 
+    // Updates pie chart data
     const onRotate = (newCoords) => {
         let oldCoords = proportions;
         for (let i = 0; i < oldCoords.length; i++) {

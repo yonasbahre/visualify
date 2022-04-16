@@ -5,7 +5,6 @@ function PieChart(props) {
     //
     //
     // ========== Functions for calculating data and shape of chart ===========
-    let currProportions = props.proportions; // delete later?
 
     // Calculates starting positions for each wedge
     let startingOffset = 0;
@@ -86,7 +85,6 @@ function PieChart(props) {
                 }
 
                 props.onRotate(newP);
-                console.log("Still right lmao " + newP);
             }
             forceUpdate();
         }, 50);
@@ -147,7 +145,7 @@ function PieChart(props) {
                 transform={"rotate(-90) translate(-" + 2 * diameter + ")"}
                 onClick={props.onClick}
             />
-            <text style={{zIndex:"200"}} fontWeight="bold" x={labelCoords(diameter, proportion, startingPoints[i], true) - 1} y={labelCoords(diameter, proportion, startingPoints[i], false) - 20} fill="black">{props.labels[i]}</text>
+            <text style={{zIndex:"200"}} fontWeight="bold" x={labelCoords(diameter, proportion, startingPoints[i], true) - 1} y={labelCoords(diameter, proportion, startingPoints[i], false) - 20} fill="black">{props.labels[i]}s</text>
             <text x={labelCoords(diameter, proportion, startingPoints[i], true)} y={labelCoords(diameter, proportion, startingPoints[i], false)} fill="black">{proportion.toFixed(1)}%</text>
         </svg>
 
@@ -156,9 +154,9 @@ function PieChart(props) {
     return(
         <div>
             {props.proportions.length === 0 ? 
-                <div style={{margin: "0px 10px 10px 10px"}}><i>Please generate a playlist to see your decade breakdown!</i></div>:
+                <div style={{margin: "0px 10px 10px 10px"}}><i>Add at least one song to your playlist to see your decade breakdown!</i></div>:
                 <svg className="PieChart" height={viewboxLength} width={viewboxLength} viewBox={"0 0 " + viewboxLength + " " + viewboxLength}>
-                    <circle className="wedge" r={diameter} cx={diameter} cy={diameter} fill="transparent" />
+                    <circle r={diameter} cx={diameter} cy={diameter} fill="transparent" />
                     {wedges}
                 </svg>
             }
