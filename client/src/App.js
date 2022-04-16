@@ -1,11 +1,6 @@
 import {useEffect, useState} from "react";
-import { Component } from "react";
 import axios from 'axios';
 
-import Playlists from "./components/Playlists";
-import PlaylistItems from "./components/PlaylistItems";
-import Features from "./components/Features";
-import Genres from "./components/Genres";
 import './App.css';
 import Console from "./components/Consoles";
 import Accordion from "./components/Accordion";
@@ -17,9 +12,6 @@ import UserPlaylists from "./components/UserPlaylists";
 import PieChart from "./components/PieChart";
 import Recommendations from "./components/Recommendations";
 import PreviewPlayer from "./components/PreviewPlayer";
-//import Graphs from "./components/Graphs";
-//import SliderComp from "./components/SliderComp";
-import SlideComponent from "./components/SlideComponent";
 
 function App() {
     // URLs and Sample Data
@@ -28,16 +20,15 @@ function App() {
     const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize"
     const RESPONSE_TYPE = "token"
 
-    const playlistID = "1LNoeW9X4ArpKeNnl0gPWK";
     let songIDs = [];
 
     const [features, setFeatures] = useState({
-        "danceability": "50",
-        "speechiness": "50",
-        "acousticness": "50",
-        "liveness": "50",
-        "happiness": "50",
-        "tempo": "50"
+        "danceability": 50,
+        "speechiness": 50,
+        "acousticness": 50,
+        "liveness": 50,
+        "happiness": 50,
+        "tempo": 110,
     });
 
     const [token, setToken] = useState("")
@@ -65,7 +56,7 @@ function App() {
 
     // Song recommendations
     const [recs, setRecs] = useState([]);
-    useEffect(() => {console.log("Size: " + recs.length)})
+    // useEffect(() => {console.log("Size: " + recs.length)})
 
     const [isLoading, setIsLoading] = useState(false);
 
@@ -76,65 +67,57 @@ function App() {
     const [userPlaylists, setUserPlaylists] = useState([]);
 
     const updateParams = (index, value) => {
-        console.log("updateParams", value);
         let x = parameters;
-        x[index].data = value;
-        setParameters(x);
+        if (value != null) {
+            x[index].data = value;
+            setParameters(x);
+    
+            setFeatures({
+                "danceability": x[0].data,
+                "speechiness": x[1].data,
+                "acousticness": x[2].data,
+                "liveness": x[3].data,
+                "happiness": x[4].data,
+                "tempo": x[5].data
+            });
+        }
 
-        setFeatures({
-            "danceability": x[0].data,
-            "speechiness": x[1].data,
-            "acousticness": x[2].data,
-            "liveness": x[3].data,
-            "happiness": x[4].data,
-            "tempo": "50"
-        });
     }
 
     const [parameters, setParameters] = useState([
         {
             name: "Danceability",
-            data: 50,
-            chart: <div className="SlideComponent"><SlideComponent index={0} value={features.danceability} updateParams={updateParams} /> </div> 
-            
+            data: features.danceability,
+            index: 0,
         },        
         {
             name: "Speechiness",
-            data: 50,
-            chart: <div className="SlideComponent"><SlideComponent index={1} value={features.speechiness} updateParams={updateParams} /> </div>
+            data: features.speechiness,
+            index: 1,
         },
         {
             name: "Acousticness",
-            data: 50,
-            chart: <div className="SlideComponent"><SlideComponent index={2} value={features.acousticness} updateParams={updateParams} /> </div>
+            data: features.acousticness,
+            index: 2,
         },
         {
             name: "Liveness",
-            data: 50,
-            chart: <div className="SlideComponent"><SlideComponent index={3} value={features.liveness} updateParams={updateParams} /> </div>
+            data: features.liveness,
+            index: 3,
         },        
         {
             name: "Happiness",
-            data: 50,
-            chart: <div className="SlideComponent"><SlideComponent index={4} value={features.happiness} updateParams={updateParams} /> </div>
+            data: features.happiness,
+            index: 4,
         },
         {
             name: "Tempo",
-            data: 50,
-            chart: <div className="SlideComponent"><SlideComponent index={5} value={features.tempo} updateParams={updateParams} /> </div>
+            data: features.tempo,
+            index: 5,
         }
     ]);
 
-    /*
-    const [currentSong, setCurrentSong] = useState(
-        {
-            name: "The World Is Yours",
-            artist: "Nas",
-            album: "Illmatic",
-            genre: "Hip-Hop/Rap",
-            year: "1994"
-        }
-    ); */
+    const [isExpanded, setisExpanded] = useState(false);
 
     const [currentSong, setCurrentSong] = useState();
     const [playerLink, setPlayerLink] = useState("https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT?si=2c4a5f07d56842c6");
@@ -196,10 +179,79 @@ function App() {
         return playlistSongs;
     }
 
+    function getFeatureAverage(featureTotal, length, isTempo) {
+        if (length > 0) {
+            if (isTempo) {
+                return (featureTotal / length).toFixed();                
+            }
+            return ((featureTotal / length)*100).toFixed();
+        }
+        return -1;
+    }
+
+    // get audio features from songs
+    const getAudioFeaturesFromSongsAndUpdate = async (token, songs) => {
+        let danceabilityTotal = 0;
+        let speechinessTotal = 0;
+        let acousticnessTotal = 0;
+        let livenessTotal = 0;
+        let happinessTotal = 0;
+        let tempoTotal = 0;
+
+        let getRequest = "https://api.spotify.com/v1/audio-features?ids=";
+        songs.forEach((song) => {
+            getRequest += song.id +  "%2C";
+        })
+        getRequest = getRequest.slice(0, -3);   // removes last %
+    
+        const {data} = await axios
+            .get(getRequest, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+
+        if (data) {
+            data.audio_features.forEach((song) => {
+                danceabilityTotal += song.danceability;
+                speechinessTotal += song.speechiness;
+                acousticnessTotal += song.acousticness;
+                livenessTotal += song.liveness;
+                happinessTotal += song.valence; // renamed to happiness
+                tempoTotal += song.tempo;
+            });
+    
+            const length = data.audio_features.length;
+    
+            const danceability = getFeatureAverage(danceabilityTotal, length, false);
+            const speechiness = getFeatureAverage(speechinessTotal, length, false);
+            const acousticness = getFeatureAverage(acousticnessTotal, length, false);
+            const liveness = getFeatureAverage(livenessTotal, length, false);
+            const happiness = getFeatureAverage(happinessTotal, length, false);
+            const tempo = getFeatureAverage(tempoTotal, length, true);
+    
+            const temp = {
+                "danceability": danceability,
+                "speechiness": speechiness,
+                "acousticness": acousticness,
+                "liveness": liveness,
+                "happiness": happiness,
+                "tempo": tempo,
+            }
+    
+            return temp;
+        }
+        return -1;
+    }
+
     // Generate recommendations based on current parameters
     const generateRecommendations = async () => {
         console.log("Generating recommendations!");
         setIsLoading(true);
+        setisExpanded(false);
         // Extract songs IDs from each song in each playlist
         let sampleSongIDs = [];
         for (let i = 0; i < listOfPlaylists.length; i++) {
@@ -215,7 +267,7 @@ function App() {
         const totalRecLimit = 20;
         const limitPerRequest = Math.ceil(50 / Math.ceil(songIDs.length/3));
 
-        const getRequest = (currentSongIDs, artistID, genre) => {
+        const recommendationGetRequest = (currentSongIDs, artistID, genre) => {
             let getReq = "https://api.spotify.com/v1/recommendations?"
                 + "limit=" + limitPerRequest 
                 + "&seed_artists=" + artistID
@@ -271,7 +323,7 @@ function App() {
 
             // get recommended songs
             const {data} = await axios
-                .get(getRequest(currentSongIDs, artist.id, genre), {
+                .get(recommendationGetRequest(currentSongIDs, artist.id, genre), {
                     headers: {
                         Authorization: `Bearer ${token}`
                     },
@@ -299,7 +351,7 @@ function App() {
         }
           
         currRecs = uniqueRecs;
-        console.log("I work! Length: " + currRecs.length);
+        // console.log("I work! Length: " + currRecs.length);
         setRecs(currRecs);
         setCurrentSong(
             {
@@ -314,6 +366,18 @@ function App() {
             }
         );
         setPlayerLink("https://open.spotify.com/track/" + currRecs[0].id);   
+
+        const tempFeatures = await getAudioFeaturesFromSongsAndUpdate(token, currRecs);
+        if (tempFeatures != -1) {
+            updateParams(0, tempFeatures.danceability);
+            updateParams(1, tempFeatures.speechiness);
+            updateParams(2, tempFeatures.acousticness);
+            updateParams(3, tempFeatures.liveness);
+            updateParams(4, tempFeatures.happiness);
+            updateParams(5, tempFeatures.tempo);
+        }
+
+        setisExpanded(false);
         setIsLoading(false);
     }
 
@@ -439,16 +503,21 @@ function App() {
                         <div>
                             <Accordion
                                 label="Add Playlists to Generator"
-                                content={!token ? 
-                                    <div style={{margin: "0px 10px 0px 10px"}}><i>Please log in to view your playlists.</i></div>: 
-                                    <UserPlaylists playlists={userPlaylists} onAdd={addPlaylist}/>
-                                }    
+                                content={!token 
+                                    ? <div style={{margin: "0px 10px 0px 10px"}}><i>Please log in to view your playlists.</i></div>
+                                    : <UserPlaylists playlists={userPlaylists} onAdd={addPlaylist}/>
+                                } 
                             />
 
                             <Accordion
-                                label="Audio Features"
-                                content={!token ? 
-                                    <div style={{margin: "0px 10px 0px 10px"}}><i>Please log in to view your playlists.</i></div>: 
+                                id="audio-features-accordion"
+                                label="Audio Features"   
+                                isActive={isExpanded}
+                                content={!token 
+                                    ? <div style={{margin: "0px 10px 0px 10px"}}><i>Please log in to view your playlists.</i></div>
+                                    : recs.length == 0 
+                                    ? <div style={{margin: "0px 10px 0px 10px"}}><i>Please add at least one playlist to the generator and generate.</i></div>
+                                    : 
                                     <div>
                                         <div style={{margin: "0px 10px 10px 10px"}}>
                                             Decade Breakdown <br/>
@@ -461,13 +530,12 @@ function App() {
                                             proportions={proportions.map(p => p.proportion)}
                                             labels={proportions.map(p => p.label)} 
                                         />
-                                        <Parameters parameters={parameters} />
+                                        <Parameters parameters={parameters} updateParams={updateParams} />
                                     </div>
                                     
-                                }    
-                            />
-                            
 
+                                } 
+                            />
                         </div>
                     } 
                 />
@@ -505,38 +573,8 @@ function App() {
                     />
                 </div>
             </div>
-
-
-
-
         </div>
     );
-
-
-    /* Commenting out the button so I can add basic UI elements
-    return (
-        <div id="App">
-            <div id="App-header">
-                <h1>Spotify React</h1>
-            </div>
-            {!token ?
-                <a href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`}>
-                    Login to Spotify</a>
-                : <button onClick={logout}>Logout</button>
-             }
-            {token ?
-                <div>
-                    <Genres token={token} songIDs={songIDs} />
-                    <Features token={token} songIDs={songIDs} />
-                    <Recommendations token={token} features={features} songIDs={songIDs} />
-                    <PlaylistItems token={token} playlistID={playlistID} />
-                    <Playlists token={token} />
-                </div>
-                : <h2>Please login</h2>
-            }
-        </div>
-    );
-    */
 }
 
 export default App;

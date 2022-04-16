@@ -20,7 +20,7 @@ function PlaylistsInGenerator(props) {
 
             <div className="Playlists">
                 {playlists.map((playlist) => (
-                    <SinglePlaylist name={playlist.name} id={playlist.id} onDelete={props.onDelete}/>
+                    <SinglePlaylist key={playlist.id} name={playlist.name} id={playlist.id} onDelete={props.onDelete}/>
                 ))}
             </div>
 

@@ -6,7 +6,8 @@ import { FaChevronUp } from 'react-icons/fa';
 
 function Accordion(props) {
     
-    const [isActive, setIsActive] = useState(false);
+    const [isActive, setIsActive] = useState(props.isActive);
+    console.log(isActive);
 
     return(
         <div className="Accordion">
