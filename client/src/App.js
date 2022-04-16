@@ -9,6 +9,8 @@ import CurrentSong from "./components/CurrentSong";
 import NewPlaylist from "./components/NewPlaylist";
 import PlaylistsInGenerator from "./components/PlaylistsInGenerator";
 import UserPlaylists from "./components/UserPlaylists";
+import PieChart from "./components/PieChart";
+import Recommendations from "./components/Recommendations";
 import PreviewPlayer from "./components/PreviewPlayer";
 
 function App() {
@@ -19,6 +21,43 @@ function App() {
     const RESPONSE_TYPE = "token"
 
     let songIDs = [];
+
+    // Percentages for each decade in pie chart
+    const [proportions, setProportions] = useState([]);
+    useEffect(() => {}, [proportions]);
+
+    const [songYears, setSongYears] = useState([]);
+    // Updates pie chart when songs are added to new playlist
+    useEffect(() => {
+        // Get the decade each song is from
+        let tempYears = [];
+        let numSongs = songYears.length;
+        songYears.forEach(year => {
+            tempYears.push(year.substring(0, 3) + "0");
+        });
+        console.log(tempYears);
+
+        // Get number of times each decade occurs
+        let newProportions = [];
+        tempYears.forEach(year => {
+            let found = newProportions.find(decade => decade.label === year);
+
+            if (found === undefined) {
+                newProportions.push({"label": year, "proportion": 1});
+            }
+            else {
+                found.proportion++;
+            }
+        });
+
+        // Convert number of times each decade occurs to a proportion
+        newProportions.forEach(decade => {
+            decade.proportion = (decade.proportion / numSongs) * 100;
+        });
+
+        console.log(newProportions);
+        setProportions(newProportions);
+    }, [songYears]);
 
     const [features, setFeatures] = useState({
         "danceability": 50,
@@ -384,6 +423,7 @@ function App() {
 
         // Remove song from UI
         setNewPlaylists(newPlaylists.filter((newPlaylist) => newPlaylist.id !== id));
+        getSongYears();
     }
     
     const addPlaylist = (id) => {
@@ -435,6 +475,9 @@ function App() {
                 image: recs[currIndex].album.images[0].url
             }
         ); 
+
+        getSongYears();
+        console.log(songYears);
     }
 
     // Skips current song, does NOT add song to playlist
@@ -458,6 +501,23 @@ function App() {
     // Exports playlist to Spotify
     const exportPlaylist = (name) => {
         console.log("Exported playlist " + name + "!");
+    }
+
+    // Sets values for pie when song is added/removed to new playlist
+    const getSongYears = () => {
+        setSongYears(newPlaylists.map(song => song.song.album.release_date.substring(0, 4)));
+    }
+
+    // Fake pie chart data --- FOR TESTING PUPRPOSES
+    // const temp = [{"label": "2010s", "proportion": 50}, {"label": "2020s", "proportion": 30}, {"label": "1990s", "proportion": 20}];
+
+    // Updates pie chart data
+    const onRotate = (newCoords) => {
+        let oldCoords = proportions;
+        for (let i = 0; i < oldCoords.length; i++) {
+            oldCoords[i].proportion = newCoords[i];
+        }
+        setProportions(oldCoords);    
     }
 
 
@@ -493,13 +553,28 @@ function App() {
 
                             <Accordion
                                 id="audio-features-accordion"
-                                label="Audio Features"
+                                label="Audio Features"   
                                 isActive={isExpanded}
                                 content={!token 
                                     ? <div style={{margin: "0px 10px 0px 10px"}}><i>Please log in to view your playlists.</i></div>
                                     : recs.length == 0 
                                     ? <div style={{margin: "0px 10px 0px 10px"}}><i>Please add at least one playlist to the generator and generate.</i></div>
-                                    : <Parameters parameters={parameters} updateParams={updateParams} />
+                                    : 
+                                    <div>
+                                        <div style={{margin: "0px 10px 10px 10px"}}>
+                                            Decade Breakdown <br/>
+                                            <i>Hold left to increase, right to decrease!</i>
+                                        </div>
+                                        <PieChart 
+                                            onRotate={onRotate} 
+                                            diameter={126} 
+                                            style={{margin: "auto"}} 
+                                            proportions={proportions.map(p => p.proportion)}
+                                            labels={proportions.map(p => p.label)} 
+                                        />
+                                        <Parameters parameters={parameters} updateParams={updateParams} />
+                                    </div>
+                                    
 
                                 } 
                             />

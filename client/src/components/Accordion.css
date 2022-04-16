@@ -14,3 +14,7 @@
     background-color: lightgrey;
     cursor: pointer;
 }
+
+.header:active {
+    filter: brightness(0.8);
+}
