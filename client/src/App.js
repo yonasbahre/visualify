@@ -6,6 +6,7 @@ import Console from "./components/Consoles";
 import Accordion from "./components/Accordion";
 import Parameters from "./components/Parameters";
 import CurrentSong from "./components/CurrentSong";
+import SongTile from "./components/SongTile";
 import NewPlaylist from "./components/NewPlaylist";
 import PlaylistsInGenerator from "./components/PlaylistsInGenerator";
 import UserPlaylists from "./components/UserPlaylists";
@@ -21,6 +22,7 @@ function App() {
     const RESPONSE_TYPE = "token"
 
     let songIDs = [];
+    const [currentIndex, setCurrentIndex] = useState(0);
 
     // Percentages for each decade in pie chart
     const [proportions, setProportions] = useState([]);
@@ -156,7 +158,7 @@ function App() {
 
     const [isExpanded, setisExpanded] = useState(false);
 
-    const [currentSong, setCurrentSong] = useState();
+    const [currentSong, setCurrentSong] = useState([null, null, null, null]);
     const [playerLink, setPlayerLink] = useState("https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT?si=2c4a5f07d56842c6");
 
     //==========================================================================
@@ -301,7 +303,7 @@ function App() {
         
 
         let currRecs = [];
-        const totalRecLimit = 20;
+        const totalRecLimit = 32;
         const limitPerRequest = Math.ceil(50 / Math.ceil(songIDs.length/3));
 
         const recommendationGetRequest = (currentSongIDs, artistID, genre) => {
@@ -388,20 +390,25 @@ function App() {
         }
           
         currRecs = uniqueRecs;
-        // console.log("I work! Length: " + currRecs.length);
         setRecs(currRecs);
-        setCurrentSong(
-            {
-                index: 0,
-                song: currRecs[0],
-                name: currRecs[0].name,
-                artist: currRecs[0].artists[0].name,
-                album: currRecs[0].album.name,
-                year: currRecs[0].album.release_date.substring(0, 4),
-                image: currRecs[0].album.images[0].url,
-                link: "https://open.spotify.com/track/" + currRecs[0].id
-            }
-        );
+        let outputSongs = [];
+        for (let i = 0; i < 4; i++) {
+            outputSongs.push(
+                {
+                    index: i,
+                    song: currRecs[i],
+                    name: currRecs[i].name,
+                    artist: currRecs[i].artists[0].name,
+                    album: currRecs[i].album.name,
+                    year: currRecs[i].album.release_date.substring(0, 4),
+                    image: currRecs[i].album.images[0].url,
+                    link: "https://open.spotify.com/track/" + currRecs[0].id
+                }
+            );
+        }
+        setCurrentIndex(3);
+
+        setCurrentSong(outputSongs);
         setPlayerLink("https://open.spotify.com/track/" + currRecs[0].id);   
 
         const tempFeatures = await getAudioFeaturesFromSongsAndUpdate(token, currRecs);
@@ -416,6 +423,7 @@ function App() {
 
         setisExpanded(false);
         setIsLoading(false);
+        console.log("Done generating recommendations!");
     }
 
     const deleteSong = (id) => {
@@ -450,52 +458,55 @@ function App() {
     }
 
     // Adds current song to playlist
-    const addSong = () => {
+    const addSong = (tileIndex) => {
         // Add song to new playlist
         setNewPlaylists([...newPlaylists,
             {
-                song: currentSong.song,
-                name: currentSong.name,
-                artist: currentSong.artist,
-                id: currentSong.song.id
+                song: currentSong[tileIndex].song,
+                name: currentSong[tileIndex].name,
+                artist: currentSong[tileIndex].artist,
+                id: currentSong[tileIndex].song.id
             }
         ]);
 
         // Going to next song
-        const currIndex = currentSong.index + 1;
-        setPlayerLink("https://open.spotify.com/track/" + recs[currIndex].id);
-        setCurrentSong(
-            {
-                index: currIndex,
-                song: recs[currIndex],
-                name: recs[currIndex].name,
-                artist: recs[currIndex].artists[0].name,
-                album: recs[currIndex].album.name,
-                year: recs[currIndex].album.release_date.substring(0, 4),
-                image: recs[currIndex].album.images[0].url
-            }
-        ); 
+        setCurrentIndex(prevCurrentIndex => prevCurrentIndex + 1);
+        let currSongsCopy = [...currentSong];
+        let newSong = {
+            index: currentIndex,
+            song: recs[currentIndex],
+            name: recs[currentIndex].name,
+            artist: recs[currentIndex].artists[0].name,
+            album: recs[currentIndex].album.name,
+            year: recs[currentIndex].album.release_date.substring(0, 4),
+            image: recs[currentIndex].album.images[0].url
+        };
+        currSongsCopy[tileIndex] = newSong;
+
+        setPlayerLink("https://open.spotify.com/track/" + recs[currentIndex].id);
+        setCurrentSong(currSongsCopy); 
 
         getSongYears();
-        console.log(songYears);
     }
 
     // Skips current song, does NOT add song to playlist
-    const skipSong = () => {
+    const skipSong = (tileIndex) => {
         // Going to next song
-        const currIndex = currentSong.index + 1;
-        setPlayerLink("https://open.spotify.com/track/" + recs[currIndex].id);
-        setCurrentSong(
-            {
-                index: currIndex,
-                song: recs[currIndex],
-                name: recs[currIndex].name,
-                artist: recs[currIndex].artists[0].name,
-                album: recs[currIndex].album.name,
-                year: recs[currIndex].album.release_date.substring(0, 4),
-                image: recs[currIndex].album.images[0].url
-            }
-        ); 
+        setCurrentIndex(prevCurrentIndex => prevCurrentIndex + 1);
+        console.log(currentIndex);
+        let currSongsCopy = [...currentSong];
+        let newSong = {
+            index: currentIndex,
+            song: recs[currentIndex],
+            name: recs[currentIndex].name,
+            artist: recs[currentIndex].artists[0].name,
+            album: recs[currentIndex].album.name,
+            year: recs[currentIndex].album.release_date.substring(0, 4),
+            image: recs[currentIndex].album.images[0].url
+        };
+        currSongsCopy[tileIndex] = newSong;
+        setPlayerLink("https://open.spotify.com/track/" + recs[currentIndex].id);
+        setCurrentSong(currSongsCopy); 
     }
 
     // Exports playlist to Spotify
@@ -506,6 +517,12 @@ function App() {
     // Sets values for pie when song is added/removed to new playlist
     const getSongYears = () => {
         setSongYears(newPlaylists.map(song => song.song.album.release_date.substring(0, 4)));
+    }
+
+    const handlePreviewUpdate = (index) => {
+        console.log(recs.length);
+        console.log(index);
+        setPlayerLink("https://open.spotify.com/track/" + recs[index].id);
     }
 
     // Fake pie chart data --- FOR TESTING PUPRPOSES
@@ -585,12 +602,29 @@ function App() {
                 {isLoading ?
                     <div id="loader"></div>
                 : 
-                <div className="centerConsole">
-                        <CurrentSong 
-                            currentSong={currentSong}
-                            addSong={addSong}
-                            skipSong={skipSong}
-                        />
+                    <div className="centerConsole">
+                        {/* <CurrentSong currentSong={currentSong} addSong={addSong} skipSong={skipSong}/> */}
+                        {currentSong[3] === null ? 
+                            <div style={{width: "600px", height: "450px", backgroundColor: "white", textAlign:"center", lineHeight: "450px"}}>
+                                <i>Add playlists and generate to see recommended songs!</i>
+                            </div>:
+
+                            <div>
+                                <div className="SongTiles">
+                                    <div className="TopTiles">
+                                        <SongTile song={currentSong[0]} index={0} add={addSong} skip={skipSong} setPreview={handlePreviewUpdate} />
+                                        <SongTile song={currentSong[1]} index={1} add={addSong} skip={skipSong} setPreview={handlePreviewUpdate} />
+                                    </div>
+
+                                    <div className="BottomTiles">
+                                        <SongTile song={currentSong[2]} index={2} add={addSong} skip={skipSong} setPreview={handlePreviewUpdate} />
+                                        <SongTile song={currentSong[3]} index={3} add={addSong} skip={skipSong} setPreview={handlePreviewUpdate} />
+                                    </div>
+
+                                </div>                               
+                            </div>
+                        }
+
                         <PreviewPlayer playerLink={playerLink}/>
                     </div>
                 }
