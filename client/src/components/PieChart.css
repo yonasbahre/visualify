@@ -1,0 +1,13 @@
+.PieChart {
+    display: table;
+    margin: auto;
+}
+
+.wedge:hover {
+    stroke-opacity: 55%;
+    cursor: pointer;
+}
+
+.wedge:active {
+    stroke-opacity: 25%;
+}

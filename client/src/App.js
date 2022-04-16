@@ -14,6 +14,7 @@ import CurrentSong from "./components/CurrentSong";
 import NewPlaylist from "./components/NewPlaylist";
 import PlaylistsInGenerator from "./components/PlaylistsInGenerator";
 import UserPlaylists from "./components/UserPlaylists";
+import PieChart from "./components/PieChart";
 import Recommendations from "./components/Recommendations";
 import PreviewPlayer from "./components/PreviewPlayer";
 //import Graphs from "./components/Graphs";
@@ -397,6 +398,22 @@ function App() {
         console.log("Exported playlist " + name + "!");
     }
 
+    // Graph data --- FOR TESTING PUPRPOSES
+    const temp1 = [40, 20, 40];
+    const temp3 = [{"label": "2010s", "proportion": 50}, {"label": "2020s", "proportion": 30}, {"label": "1990s", "proportion": 20}];
+    const temp4 = [];
+    const [proportions, setProportions] = useState(temp3);
+    useEffect(() => {}, [proportions]);
+
+
+    const onRotate = (newCoords) => {
+        let oldCoords = proportions;
+        for (let i = 0; i < oldCoords.length; i++) {
+            oldCoords[i].proportion = newCoords[i];
+        }
+        setProportions(oldCoords);    
+    }
+
 
     // Basic structure of page
     return (
@@ -432,7 +449,21 @@ function App() {
                                 label="Audio Features"
                                 content={!token ? 
                                     <div style={{margin: "0px 10px 0px 10px"}}><i>Please log in to view your playlists.</i></div>: 
-                                    <Parameters parameters={parameters} />
+                                    <div>
+                                        <div style={{margin: "0px 10px 10px 10px"}}>
+                                            Decade Breakdown <br/>
+                                            <i>Hold left to increase, right to decrease!</i>
+                                        </div>
+                                        <PieChart 
+                                            onRotate={onRotate} 
+                                            diameter={126} 
+                                            style={{margin: "auto"}} 
+                                            proportions={proportions.map(p => p.proportion)}
+                                            labels={proportions.map(p => p.label)} 
+                                        />
+                                        <Parameters parameters={parameters} />
+                                    </div>
+                                    
                                 }    
                             />
                             

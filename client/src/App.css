@@ -38,6 +38,10 @@ button:hover {
     background-color: lightgray;
 }
 
+button:active {
+    filter: brightness(0.8);
+}
+
 .centerConsole {
     display: flex;
     flex-direction: column;
